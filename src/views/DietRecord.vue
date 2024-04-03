@@ -44,7 +44,8 @@
                             <van-stepper v-model="imgNum" button-size="20" disable-input @change="choosed = true" />
                             <van-button @click="uploadImage" plain hairline type="primary">上传</van-button>
                         </div>
-                        <van-steps :active="currentStep" active-icon="success" direction="vertical" active-color="#07c160">
+                        <van-steps :active="currentStep" active-icon="success" direction="vertical"
+                            active-color="#07c160">
                             <van-step>图片上传</van-step>
                             <van-step>选择食物种类数量</van-step>
                             <van-step>确认上传</van-step>
@@ -55,14 +56,14 @@
                 <div class="select">
                     <h4>选择食物</h4>
                     <div>
-                        <van-sidebar v-model="candidatesIndex" van-sidebar-width="20px">
+                        <van-sidebar v-model="candidatesIndex" van-sidebar-width="20px"
+                            @change="console.log(checked[candidatesIndex])">
                             <van-sidebar-item v-for="(candidates, index) in candidateFoodList" :key="index"
                                 :title="'食物' + (index + 1)" class="custom-sidebar-item" />
                         </van-sidebar>
-                        <van-radio-group v-model="checked">
+                        <van-radio-group v-model="currentChecked">
                             <van-radio v-if="candidateFoodList.length > 0"
-                                v-for="(foodName, index) in candidateFoodList[candidatesIndex].top5" :name="foodName"
-                                @click="storeChoice">
+                                v-for="(foodName, index) in candidateFoodList[candidatesIndex].top5" :name="index">
                                 {{ foodName }}
                             </van-radio>
                         </van-radio-group>
@@ -75,7 +76,8 @@
         <!-- 页面内容 -->
         <div class="container">
             <van-sidebar v-model="currentTag" class="sidebar" @change="switchQuery(false)">
-                <van-sidebar-item v-for="tag in tags" :key="tag.id" :title="tag.name" @click="currentTag = tag.id - 1" />
+                <van-sidebar-item v-for="tag in tags" :key="tag.id" :title="tag.name"
+                    @click="currentTag = tag.id - 1" />
             </van-sidebar>
             <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" class="list-container"
                 @load="loadFoodDetail(false)">
@@ -161,7 +163,8 @@
                     <div class="energy">
                         <div class="info-row">
                             <p class="info-title carbs">碳水化合物</p>
-                            <p class="number">{{ (selectedFood.carbohydrateMassDensity * currentWeight).toFixed(1) }} 克</p>
+                            <p class="number">{{ (selectedFood.carbohydrateMassDensity * currentWeight).toFixed(1) }} 克
+                            </p>
                         </div>
                         <div class="info-row">
                             <p class="info-title protein">蛋白质</p>
@@ -177,7 +180,7 @@
                     <div class="weightBar">
                         <div>
                             <span style="font-size: 2em;">{{ Math.round(selectedFood.calorieMassDensity * currentWeight)
-                            }}</span>
+                                }}</span>
                             <span class="number">千卡</span>
                         </div>
                         <van-icon name="diamond" id="diamondIcon" />
@@ -224,15 +227,19 @@ export default {
             popupVisible: false, // 控制弹窗显示
             step: -1, // 步骤条的步数
             fileList: [], // 上传图片的文件列表
-            imgUrl: '', // 上传图片的地址
+            imgSid: '', // 上传图片的地址
             imgNum: 1, // 上传图片的数量
             choosed: false, // 是否选择了图片数量
             confirmed: false, // 是否确认上传
             uploaded: false, // 是否上传图片成功
-            candidateFoodList: [], // 识别出的食物列表
+            dietId: 32,
+            candidateFoodList: [
+                { food: 38, region: "58inuv5551", top5: ["海参", "紫菜包饭", "玉米棒", "青椒", "皮蛋"] },
+                { food: 135, region: "58inuv5551", top5: ["荞麦馒头", "馒头", "芝麻糊", "菜包", "南瓜紫薯馒头"] },
+                { food: 203, region: "58inuv5551", top5: ["鸡蛋", "牛奶", "双皮奶", "豆浆", "汤圆"] },
+            ], // 识别出的食物列表
             candidatesIndex: 0, // 识别出的食物列表的索引
-            checked: '', // 选择的食物
-            choices: [], // 选择的食物列表
+            checked: [], // 选择的食物
 
             // 侧边栏
             currentTag: 0,
@@ -270,6 +277,15 @@ export default {
             );
 
             return lastMonth;
+        },
+        // 根据当前 candidatesIndex 返回对应的选中的食物
+        currentChecked: {
+            get() {
+                return this.checked[this.candidatesIndex] || 0;
+            },
+            set(value) {
+                this.checked[this.candidatesIndex] = value;
+            }
         },
         // 当前步骤
         currentStep() {
@@ -329,6 +345,8 @@ export default {
         };
         this.selectedMeal = mealTypeMap[this.meal];
         this.fetchTags();
+
+        this.checked = Array(this.candidateFoodList.length).fill(0);
 
         // console.log(ElLoading);
     },
@@ -404,10 +422,6 @@ export default {
                 return;
             }
             this.confirmed = true;
-            // 创建一个 FormData 对象
-            const formData = new FormData();
-            // 将图片添加到 FormData 中
-            formData.append('file', this.fileList[0].file);
             const loading = ElLoading.service({
                 lock: true,
                 text: 'Loading',
@@ -415,21 +429,27 @@ export default {
             });
 
             try {
-                // 发送 POST 请求
-                const uploadResponse = await axios.post('/api/user/common/upload', formData);
-                // 处理上传成功的逻辑
-                console.log('上传成功', uploadResponse.data);
-                this.imgUrl = uploadResponse.data.data;
+                const config = {
+                    headers: {
+                        'Content-Type': 'image/jpeg'
+                    }
+                };
+                const uploadResponse = await axios.post('/api/user/common/uploadToGo', this.fileList[0].file, config);
 
+                // 处理上传成功的逻辑
+                console.log('上传成功', uploadResponse);
+                // return;
+
+                this.imgSid = uploadResponse.data.data;
                 const recognizeData = {
-                    url: this.imgUrl,
+                    sid: this.imgSid,
                     num: this.imgNum,
                 };
                 // 发送 GET 请求
-                const recognizeResponse = await axios.get('/api/food/record/recognize', { params: recognizeData });
+                const recognizeResponse = await axios.post('/api/food/record/segrec', recognizeData);
                 // 处理识别成功的逻辑
-                console.log('识别成功', recognizeResponse.data.data.results);
-                if(recognizeResponse.data.data.results == null){
+                console.log('识别成功', recognizeResponse.data);
+                if (recognizeResponse.data.data.message.results == null) {
                     ElMessage({
                         dangerouslyUseHTMLString: true,
                         message: '<strong>图片识别失败</strong><br/>请稍后重试',
@@ -437,7 +457,8 @@ export default {
                     });
                     return;
                 }
-                this.candidateFoodList = recognizeResponse.data.data.results;
+                this.dietId = recognizeResponse.data.data.message.dietId;
+                this.candidateFoodList = recognizeResponse.data.data.message.results;
                 this.uploaded = true;
                 console.log(this.candidateFoodList);
             } catch (error) {
@@ -449,20 +470,6 @@ export default {
                 });
             } finally {
                 loading.close();
-            }
-        },
-        // 存储每一次选择
-        storeChoice() {
-            const num = this.candidateFoodList[this.candidatesIndex].food;
-            const name = this.checked;
-
-            // 查找是否已经存在相同的 num，如果存在则更新，否则添加新的对象
-            const existingChoiceIndex = this.choices.findIndex(choice => choice.num === num);
-
-            if (existingChoiceIndex !== -1) {
-                this.choices[existingChoiceIndex] = { num, name };
-            } else {
-                this.choices.push({ num, name });
             }
         },
         // 上传选择
@@ -478,9 +485,21 @@ export default {
                 return;
             }
             console.log(this.choices);
+
+            // 创建请求体
+            const foods = [];
+            for (var i = 0; i < this.candidateFoodList.length; i++) {
+                foods.push({
+                    food: this.candidateFoodList[i].food,
+                    region: this.candidateFoodList[i].region,
+                    name: this.candidateFoodList[i].top5[this.checked[i]]
+                })
+            }
             const nutritionData = {
-                foods: this.choices,
+                dietId: this.dietId,
+                foods: foods,
             };
+            console.log("营养分析：", nutritionData);
             // 调用loading服务
             const loading = ElLoading.service({
                 lock: true,
@@ -493,7 +512,7 @@ export default {
                 const response = await axios.post('/api/food/record/nutrition', nutritionData);
                 console.log('上传成功', response.data);
                 this.popupVisible = false;
-                this.addedFoodList = [...this.addedFoodList, ...response.data.data];
+                this.addedFoodList = [...this.addedFoodList, ...response.data.data.message.results];
             } catch (error) {
                 console.error('上传失败', error);
             } finally {
@@ -504,7 +523,7 @@ export default {
         saveDiet() {
             const recordData = {
                 createTime: dealTime(this.currentTime),
-                imgUrl: this.imgUrl,
+                imgUrl: this.imgSid,
                 type: this.selectedMeal
             };
             // 发送第一个POST请求
