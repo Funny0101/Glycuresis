@@ -190,7 +190,7 @@
     </van-tabbar>
   </div>
 </template>
-  
+
 
 <script>
 import * as echarts from "echarts";

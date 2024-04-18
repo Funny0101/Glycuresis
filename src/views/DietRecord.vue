@@ -232,11 +232,11 @@ export default {
             choosed: false, // 是否选择了图片数量
             confirmed: false, // 是否确认上传
             uploaded: false, // 是否上传图片成功
-            dietId: 32,
+            dietId: undefined,
             candidateFoodList: [
-                { food: 38, region: "58inuv5551", top5: ["海参", "紫菜包饭", "玉米棒", "青椒", "皮蛋"] },
-                { food: 135, region: "58inuv5551", top5: ["荞麦馒头", "馒头", "芝麻糊", "菜包", "南瓜紫薯馒头"] },
-                { food: 203, region: "58inuv5551", top5: ["鸡蛋", "牛奶", "双皮奶", "豆浆", "汤圆"] },
+                // { food: 38, region: "58inuv5551", top5: ["海参", "紫菜包饭", "玉米棒", "青椒", "皮蛋"] },
+                // { food: 135, region: "58inuv5551", top5: ["荞麦馒头", "馒头", "芝麻糊", "菜包", "南瓜紫薯馒头"] },
+                // { food: 203, region: "58inuv5551", top5: ["鸡蛋", "牛奶", "双皮奶", "豆浆", "汤圆"] },
             ], // 识别出的食物列表
             candidatesIndex: 0, // 识别出的食物列表的索引
             checked: [], // 选择的食物
@@ -373,6 +373,8 @@ export default {
                 .then((response) => {
                     const data = response.data.data;
                     this.tags = data;
+                    // this.tags = [{ id: 0, name: "全部" }].concat(data);
+                    // this.tags = [{ id: 1, name: "全部" }, ...data];
                 })
                 .catch((error) => {
                     console.error('Error fetching data:', error);// 处理错误
