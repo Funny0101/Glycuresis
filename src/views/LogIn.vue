@@ -198,10 +198,10 @@ export default {
         const response = await post('/user/user/login', {
           account: this.loginData.account,
           password: this.loginData.password,
+          // role: "PATIENT",
         });
 
         // 处理登录成功的逻辑
-        console.log('登录成功', response.data);
         const { code, message, data } = response;
         console.log('Code:', code);
         console.log('Message:', message);
@@ -209,6 +209,7 @@ export default {
 
         if (code === 200) { // 假设200表示登录成功，根据实际返回的 code 值修改条件
           // 使用 Vue Router 跳转到 HomePage
+          console.log('登录成功', response.data);
           this.GetUserInformation();
 
           this.$message.success(message);
@@ -227,7 +228,7 @@ export default {
         if (error.response) {
           console.error('Error Response:', error.response.data);
         }
-        this.$message.error('登录失败', error);
+        this.$message.error('登录失败', error); 
       }
     },
 
@@ -296,15 +297,16 @@ export default {
               });
               return;
             }
-            this.userData.name = response.data.name;
-            this.userData.account = response.data.account;
+            this.userData = response.data;
+            // this.userData.name = response.data.name;
+            // this.userData.account = response.data.account;
 
 
-            this.userData.gender = response.data.gender;
-            this.userData.age = response.data.age;
-            this.userData.height = response.data.height;
-            this.userData.weight = response.data.weight;
-            this.userData.diabetesType = response.data.diabetesType;
+            // this.userData.gender = response.data.gender;
+            // this.userData.age = response.data.age;
+            // this.userData.height = response.data.height;
+            // this.userData.weight = response.data.weight;
+            // this.userData.diabetesType = response.data.diabetesType;
 
             if (this.userData.gender === '' || this.userData.gender === null) {
               console.log('由于性别而填充信息');
@@ -331,8 +333,8 @@ export default {
             else {
               console.log('跳转主页');
               this.$router.push({ name: 'home' });
+              this.$store.commit('setUserData', this.userData);
             }
-
             console.log('Get_userdata_after_login', this.userData);
           })
 
