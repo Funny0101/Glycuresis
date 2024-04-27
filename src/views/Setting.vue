@@ -79,14 +79,15 @@
               :rules="[{ pattern: patterns.age, message: '请输入正确内容' }]" />
           </van-form>
           <div style="margin: 10px;">
-            <van-button round block type="primary" native-type="submit" @click="handleFormConfirm($refs.ageForm, 'age')">
+            <van-button round block type="primary" native-type="submit"
+              @click="handleFormConfirm($refs.ageForm, 'age')">
               提交
             </van-button>
           </div>
         </van-dialog>
 
         <!-- 性别 -->
-        <van-cell :value="userData.gender" is-link @click="showPicker.gender=true">
+        <van-cell :value="userData.gender" is-link @click="showPicker.gender = true">
           <template #title>
             <div class="optionBar">
               <img src="@/assets/setting/gender.png" alt="gender">
@@ -95,7 +96,8 @@
           </template>
         </van-cell>
         <van-popup v-model:show="showPicker.gender" round position="bottom">
-          <van-picker :columns="genders" @cancel="showPicker.gender = false" @confirm="handlePickerConfirm($event, 'gender')" />
+          <van-picker :columns="genders" @cancel="showPicker.gender = false"
+            @confirm="handlePickerConfirm($event, 'gender')" />
         </van-popup>
 
         <!-- 类别 -->
@@ -108,7 +110,8 @@
           </template>
         </van-cell>
         <van-popup v-model:show="showPicker.diabetesType" round position="bottom">
-          <van-picker :columns="diabetesTypes" @cancel="showPicker.diabetesType = false" @confirm="handlePickerConfirm($event, 'diabetesType')" />
+          <van-picker :columns="diabetesTypes" @cancel="showPicker.diabetesType = false"
+            @confirm="handlePickerConfirm($event, 'diabetesType')" />
         </van-popup>
       </van-cell-group>
 
@@ -141,11 +144,9 @@
       <van-tabbar-item icon="setting" text="设置" to="/setting" />
     </van-tabbar>
 
-    <van-button
-      round
-      class="saveButton" 
-      :v-if="userDataChanged"
-      @click="saveUserInfo">保存</van-button>
+    <van-button round class="saveButton" v-if="userDataChanged" @click="saveUserInfo">
+      保存
+    </van-button>
   </div>
 </template>
 
@@ -156,7 +157,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      userData: this.$store.state.userData,
+      userData: JSON.parse(JSON.stringify(this.$store.state.userData)),
       // userDataChanged: false,
       showPicker: {
         height: false,
@@ -171,8 +172,8 @@ export default {
         age: /^(?:[1-9]?\d|100)$/, // 年龄在 1 到 100 之间的正则表达
       },
       genders: [
-        { text: "男", value:  "男" },
-        { text: "女", value:  "女" },
+        { text: "男", value: "男" },
+        { text: "女", value: "女" },
       ],
       diabetesTypes: [
         { text: "一型糖尿病", value: "一型糖尿病" },
@@ -180,12 +181,24 @@ export default {
       ],
     }
   },
+  // 组件创建时调用
+  mounted() {
+    this.getUserInfo();
+  },
+  // 组件销毁时调用
+  beforeUnmount() {
+  },
   // 计算属性
   computed: {
-    userDataChanged(){
-      console.log('userData', this.userData);
-      console.log('store', this.$store.state.userData);
-      return JSON.stringify(this.userData) !== JSON.stringify(this.$store.state.userData);
+    userDataChanged() {
+      for (const key in this.userData) {
+        // console.log(key, this.userData[key], this.$store.state.userData[key]);
+        if (this.userData[key] != this.$store.state.userData[key]) {
+          // 只判断值是否变化，而不判断类型
+          return true;
+        }
+      }
+      return false;
     }
   },
   // 监听
@@ -194,24 +207,10 @@ export default {
     // 'userData': {
     //   handler(newValue, oldValue) {
     //     console.log('userData 发生了变化', newValue, oldValue);
-    //     this.userDataChanged = true;
+    //     // this.userDataChanged = true;
     //   },
     //   deep: true,
     // }
-  },
-  mounted() {
-    this.getUserInfo();
-    // console.log('userData', this.userData);
-  },
-  beforeUnmount() {
-    // 判断userData是否发生了变化
-    if (JSON.stringify(this.userData) !== JSON.stringify(this.$store.state.userData)) {
-      // userData 发生了变化，执行相应的操作
-      console.log('userData 发生了变化');
-    }
-  },
-  computed: {
-
   },
   methods: {
     // 获取用户信息
@@ -399,5 +398,4 @@ export default {
   right: 0;
   margin: 1px auto;
 }
-
 </style>
