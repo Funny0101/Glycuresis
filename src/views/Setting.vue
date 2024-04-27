@@ -6,6 +6,9 @@
       <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
       <div class="name">{{ userData.name }}</div>
       <div class="profile">{{ userData.account }}</div>
+      <!-- <van-skeleton title avatar :row="3" :loading="false">
+        <div>实际内容</div>
+      </van-skeleton> -->
     </div>
 
     <!-- 两个圆角矩形， 水平排列 -->
@@ -117,8 +120,43 @@
 
       <!-- 账号 -->
       <van-cell-group title="账号">
-        <van-cell title="修改密码" is-link />
-        <van-cell title="绑定手机号" is-link />
+        <!-- 修改密码 -->
+        <van-cell is-link @click="showPicker.password = true">
+          <template #title>
+            <div class="optionBar">
+              <img src="@/assets/setting/password.png" alt="password">
+              <span>修改密码</span>
+            </div>
+          </template>
+        </van-cell>
+        <van-dialog v-model:show="showPicker.password" title="更改密码" theme="round-button" :showConfirmButton="false">
+          <van-form ref="passwordForm">
+            <van-field v-model="userData.account" required label="账户" autosize placeholder="请输入账户"
+              :rules="[{ pattern: patterns.account, message: '请输入正确内容' }]" />
+            <van-field v-model="userData.password" required label="新密码" autosize placeholder="请输入密码" type="password"
+              :rules="[{ pattern: patterns.password, message: '请输入正确内容' }]" />
+            <van-field v-model="sms" center clearable label="短信验证码" placeholder="请输入短信验证码">
+              <template #button>
+                <van-button size="small" type="primary">发送验证码</van-button>
+              </template>
+            </van-field>
+          </van-form>
+          <div style="margin: 10px;">
+            <van-button round block type="primary" native-type="submit" @click="showPicker.password = false">
+              提交
+            </van-button>
+          </div>
+        </van-dialog>
+
+        <!-- 绑定手机号 -->
+        <van-cell is-link>
+          <template #title>
+            <div class="optionBar">
+              <img src="@/assets/setting/phone.png" alt="phone">
+              <span>绑定手机号</span>
+            </div>
+          </template>
+        </van-cell>
       </van-cell-group>
 
       <!-- 关于 -->
@@ -158,6 +196,7 @@ export default {
   data() {
     return {
       userData: JSON.parse(JSON.stringify(this.$store.state.userData)),
+      sms: '', // 短信验证码
       // userDataChanged: false,
       showPicker: {
         height: false,
@@ -165,6 +204,8 @@ export default {
         age: false,
         gender: false,
         diabetesType: false,
+        password: false,
+        phone: false,
       },
       patterns: {
         height: /^(1\d{2}|200)$/, // 身高在 100 到 200 之间的正则表达式
@@ -254,7 +295,6 @@ export default {
           "password": "",
           "rePassword": "",
           "code": "",
-          "role": ""
         }
         const response = await post('/user/user/forgetPassword', queryData);
         // console.log('userdata',response.data);
@@ -292,7 +332,7 @@ export default {
       try {
         const response = await put('/user/user/updateDetail', this.userData);
         console.log('保存成功', response.data);
-        this.$store.commit('setUserData', this.userData);
+        this.$store.commit('setUserData', JSON.parse(JSON.stringify(this.userData)));
       } catch (error) {
         // 处理登录失败的逻辑
         console.error('失败', error);
