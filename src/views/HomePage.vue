@@ -124,7 +124,7 @@
       <hr>
       <!-- 文件上传 -->
       <el-form label-position="top" label-width="auto">
-      <h3>文件上传</h3>
+        <h3>文件上传</h3>
         <el-form-item label="" style="display: flex; align-items: center;">
           <!-- <a href="javascript:;" class="file">选择文件
             <input type="file" accept=".xls,.xlsx,.csv" @change="handleGlucoseFileUpload">
@@ -217,7 +217,7 @@
     </van-tabbar>
   </div>
 </template>
-  
+
 
 <script>
 import * as echarts from "echarts";
@@ -552,12 +552,12 @@ export default {
 
         const config = {
           headers: {
-              'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data'
           }
         };
-        
+
         axios
-          .post('/api/food/glucose/uploadGlucoseFile', {file:this.glucoseRecordFile}, config)
+          .post('/api/food/glucose/uploadGlucoseFile', { file: this.glucoseRecordFile }, config)
           .then((res) => {
             console.log(res);
             this.queryBloodSugarData(); // 更新当前的血糖值
@@ -1081,20 +1081,22 @@ export default {
   text-indent: 0;
   line-height: 20px;
 }
+
 .file input {
   position: absolute;
   right: 0;
   top: 0;
   opacity: 0;
   filter: alpha(opacity=0);
-  font-size: 100px;/* 增大不同浏览器的可点击区域 */
+  font-size: 100px;
+  /* 增大不同浏览器的可点击区域 */
   cursor: pointer;
 }
+
 .file:hover {
   background: #AADFFD;
   border-color: #78C3F3;
   color: #004974;
   text-decoration: none;
 }
-
 </style>

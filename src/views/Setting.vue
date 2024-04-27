@@ -152,8 +152,8 @@
 
 <script>
 import { get, put, post, del } from "../axios/axiosConfig.js";
-import store from "../store/index";
 import axios from "axios";
+import { showConfirmDialog } from 'vant';
 export default {
   data() {
     return {
