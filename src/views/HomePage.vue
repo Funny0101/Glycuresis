@@ -120,19 +120,46 @@
     </div>
 
     <!-- 血糖记录上传弹窗 -->
-    <el-dialog title="血糖上传" v-model="glucoseFormVisible" center width=70% top=10vh>
-      <el-form ref="glucoseForm" :model="glucoseForm" :rules="glucoseFormRules" label-position="top">
-        <el-form-item label="血糖值" prop="glucose">
-          <el-input v-model="glucoseForm.glucose" style="width: 10px" />
+    <el-dialog title="血糖上传" v-model="glucoseFormVisible" center width=90% top=10vh>
+      <hr>
+      <!-- 文件上传 -->
+      <el-form label-position="top" label-width="auto">
+      <h3>文件上传</h3>
+        <el-form-item label="" style="display: flex; align-items: center;">
+          <!-- <a href="javascript:;" class="file">选择文件
+            <input type="file" accept=".xls,.xlsx,.csv" @change="handleGlucoseFileUpload">
+          </a>
+          <div v-if="glucoseRecordFile">
+            <p>{{ shortenFileName(glucoseRecordFile.name,25) }}</p>
+          </div> -->
+          <input type="file" accept=".xls,.xlsx,.csv" @change="handleGlucoseFileUpload">
         </el-form-item>
-        <el-form-item label="时间">
-          <el-date-picker v-model="glucoseForm.time" type="datetime" style="width: 10px">
-          </el-date-picker>
+        <el-form-item>
+          <el-button type="primary" :disabled="!glucoseRecordFile" @click="uploadGlucoseFile()">确认上传</el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="glucoseFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="addGlucoseRecord()">确定</el-button>
+      <hr>
+      <!-- 手动输入 -->
+      <el-form ref="glucoseForm" :model="glucoseForm" :rules="glucoseFormRules" label-position="top">
+        <h3>手动输入</h3>
+        <el-form-item label="血糖" style="display: flex; align-items: center;">
+          <el-input v-model="glucoseForm.glucose" style="">
+            <template #append>mmol/L</template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="时间" style="display: flex; align-items: center;">
+          <el-date-picker v-model="glucoseForm.time" type="datetime">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="addGlucoseRecord()">确认上传</el-button>
+        </el-form-item>
+      </el-form>
+      <hr><br>
+      <!-- 按钮 -->
+      <div slot="footer" class="dialog-footer" style="display: flex; justify-content: flex-end;">
+        <!-- <el-button type="primary" @click="addGlucoseRecord()">确定</el-button> -->
+        <el-button @click="glucoseFormVisible = false" type="danger">退出</el-button>
       </div>
     </el-dialog>
 
@@ -190,7 +217,7 @@
     </van-tabbar>
   </div>
 </template>
-
+  
 
 <script>
 import * as echarts from "echarts";
@@ -255,6 +282,8 @@ export default {
           { required: true, message: '请选择时间', trigger: 'blur' },
         ],
       },
+      // 血糖上传选择的文件
+      glucoseRecordFile: null,
 
       // 用户信息
       userInfo: {},
@@ -511,6 +540,42 @@ export default {
           meal: meal,
         },
       });
+    },
+    //
+    handleGlucoseFileUpload(event) {
+      this.glucoseRecordFile = event.target.files[0]; // 获取上传的文件
+    },
+    // 文件方式上传血糖记录
+    uploadGlucoseFile() {
+      if (this.glucoseRecordFile) {
+        console.log('上传文件:', this.glucoseRecordFile);
+
+        const config = {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
+        };
+        
+        axios
+          .post('/api/food/glucose/uploadGlucoseFile', {file:this.glucoseRecordFile}, config)
+          .then((res) => {
+            console.log(res);
+            this.queryBloodSugarData(); // 更新当前的血糖值
+            this.glucoseFormVisible = false;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+    // 省略过长文件名的中间部分
+    shortenFileName(fileName, maxLength) {
+      if (fileName.length <= maxLength) {
+        return fileName;
+      }
+      const startLength = Math.ceil((maxLength - 3) / 2);
+      const endLength = Math.floor((maxLength - 3) / 2);
+      return fileName.substr(0, startLength) + '...' + fileName.substr(-endLength);
     },
 
     gotoFood() {
@@ -1002,4 +1067,34 @@ export default {
   bottom: 55px;
   width: 100%;
 }
+
+.file {
+  position: relative;
+  display: inline-block;
+  background: #D0EEFF;
+  border: 1px solid #99D3F5;
+  border-radius: 4px;
+  padding: 4px 12px;
+  overflow: hidden;
+  color: #1E88C7;
+  text-decoration: none;
+  text-indent: 0;
+  line-height: 20px;
+}
+.file input {
+  position: absolute;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  font-size: 100px;/* 增大不同浏览器的可点击区域 */
+  cursor: pointer;
+}
+.file:hover {
+  background: #AADFFD;
+  border-color: #78C3F3;
+  color: #004974;
+  text-decoration: none;
+}
+
 </style>
