@@ -32,6 +32,13 @@ module.exports = defineConfig({
           '^/api': ''  
         },
       },
+      '/baidu': { 
+        target: 'https://aip.baidubce.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/baidu': ''  
+        },
+      },
     },
   }
 });

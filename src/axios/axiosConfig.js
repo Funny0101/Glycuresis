@@ -1,10 +1,8 @@
 import axios from "axios";
 
-
-
 const instance = axios.create({
     baseURL: '/api',
-  
+
     timeout: 5000,
 
     withCredentials: true, // 异步请求携带cookie
@@ -63,3 +61,27 @@ export function del(url, data) {
     });
 }
 
+//封装一个针对百度智能云的post函数
+export function baiduPost(url, data, contentType = 'application/x-www-form-urlencoded') {
+    // 创建一个新的 axios 实例，以确保每次请求都可以单独设置请求头
+    const instance = axios.create({
+        baseURL: '/baidu',
+        timeout: 15000,
+        headers: {
+            'Content-Type': contentType,
+            'Accept': 'application/json',
+        },
+    });
+
+    instance.interceptors.response.use(
+        response => {
+            return response.data;
+        },
+        error => {
+            return Promise.reject(error);
+        }
+    );
+
+    // 发起请求
+    return instance.post(url, data);
+}
