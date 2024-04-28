@@ -133,19 +133,33 @@
           <van-form ref="passwordForm">
             <van-field v-model="userData.account" required label="账户" autosize placeholder="请输入账户"
               :rules="[{ pattern: patterns.account, message: '请输入正确内容' }]" />
-            <van-field v-model="userData.password" required label="新密码" autosize placeholder="请输入密码" type="password"
+            <van-field v-model="password" required label="密码" autosize placeholder="密码(不含中文,6位以上)" type="password"
               :rules="[{ pattern: patterns.password, message: '请输入正确内容' }]" />
-            <van-field v-model="sms" center clearable label="短信验证码" placeholder="请输入短信验证码">
-              <template #button>
-                <van-button size="small" type="primary">发送验证码</van-button>
+            <van-field v-model="rePassword" required label="新密码" autosize placeholder="新密码(不含中文,6位以上)" type="password"
+              :rules="[{ pattern: patterns.password, message: '请输入正确内容' }]" />
+            <van-field v-model="sms" required center clearable label="短信验证码" placeholder="请输入验证码"
+              :rules="[{ pattern: patterns.sms, message: '请输入正确内容' }]">
+              <template #extra>
+                <van-button size="small" type="primary" :disabled="smsButtonDisabled" @click="getVerificationCode()">发送验证码</van-button>
               </template>
             </van-field>
           </van-form>
-          <div style="margin: 10px;">
-            <van-button round block type="primary" native-type="submit" @click="showPicker.password = false">
+          <!-- <div style="margin: 10px;">
+            <van-button round block type="primary" native-type="submit"
+              @click="handleFormConfirm($refs.passwordForm, 'password')">
+              提交
+            </van-button>
+          </div> -->
+          <div style="display: flex; margin: 10px;">
+            <van-button round type="default" @click="showPicker.password = false" style="flex: 1;">
+              取消
+            </van-button>
+            <van-button round type="primary" native-type="submit"
+              @click="handleFormConfirm($refs.passwordForm, 'password')" style="flex: 1;">
               提交
             </van-button>
           </div>
+
         </van-dialog>
 
         <!-- 绑定手机号 -->
@@ -197,7 +211,10 @@ export default {
     return {
       userData: JSON.parse(JSON.stringify(this.$store.state.userData)),
       sms: '', // 短信验证码
-      // userDataChanged: false,
+      password: '', // 密码
+      rePassword: '', // 确认密码
+      smsButtonDisabled: false, // 短信验证码按钮是否禁用
+
       showPicker: {
         height: false,
         weight: false,
@@ -211,6 +228,8 @@ export default {
         height: /^(1\d{2}|200)$/, // 身高在 100 到 200 之间的正则表达式
         weight: /^(?:1\d{2}|[1-9]?\d)$/, // 体重在 10 到 200 之间的正则表达式
         age: /^(?:[1-9]?\d|100)$/, // 年龄在 1 到 100 之间的正则表达
+        password: /^[^\u4e00-\u9fa5]{6,}$/,//密码不能包含中文，长度大于6
+        sms: /^\d{6}$/,//6位数字
       },
       genders: [
         { text: "男", value: "男" },
@@ -287,25 +306,6 @@ export default {
         }
       }
     },
-    async changePassword() {
-      try {
-        const queryData = {
-          "name": "",
-          "account": "",
-          "password": "",
-          "rePassword": "",
-          "code": "",
-        }
-        const response = await post('/user/user/forgetPassword', queryData);
-        // console.log('userdata',response.data);
-      } catch (error) {
-        // 处理登录失败的逻辑
-        console.error('失败', error);
-        if (error.response) {
-          console.error('Error Response:', error.response.data);
-        }
-      }
-    },
     // 处理表单确认事件
     handleFormConfirm(form, attributeName) {
       // 手动触发表单校验
@@ -314,12 +314,64 @@ export default {
           // 校验成功
           console.log('校验成功');
           this.showPicker[attributeName] = false;
+          if (attributeName == 'password') {
+            this.changePassword();
+          }
         })
         .catch(() => {
           // 校验失败
           console.log('校验失败');
-          this.$toast('请输入正确数据');
+          this.$toast('请先填写正确的信息');
         });
+    },
+    // 获取验证码
+    async getVerificationCode() {
+      if (this.userData.account == "") {
+        this.$message.error("请先填写账号！");
+        return;
+      }
+      if (this.password == "") {
+        this.$message.error("请先填写密码！");
+        return;
+      }
+      if (this.rePassword == "") {
+        this.$message.error("请先填写新密码！");
+        return;
+      }
+      try {
+        const response = await get(`/user/user/sendCodeUpdate/${this.userData.account}`);
+        // 处理获取验证码成功的逻辑
+        console.log('获取验证码成功', response);
+        ElMessage('已发送验证码');
+        this.smsButtonDisabled = true;
+        setTimeout(() => {
+          this.smsButtonDisabled = false;
+        }, 60000);
+      } catch (error) {
+        // 处理获取验证码失败的逻辑
+        console.error('获取验证码失败', error);
+        if (error.response) {
+          console.error('Error Response:', error.response.data);
+        }
+      }
+    },
+    // 修改密码
+    async changePassword() {
+      try {
+        const queryData = {
+          "name": this.userData.name,
+          "account": this.userData.account,
+          "password": this.password,
+          "rePassword": this.rePassword,
+          "code": this.sms,
+        }
+        const response = await put('/user/user/forgetPassword', queryData);
+        this.$message.success('修改密码成功');
+        console.log('修改密码', response);
+      } catch (error) {
+        // 处理登录失败的逻辑
+        console.error('失败', error);
+      }
     },
     // 处理选择器确认事件
     handlePickerConfirm(selectedValue, attributeName) {
