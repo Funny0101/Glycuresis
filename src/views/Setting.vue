@@ -404,7 +404,7 @@ export default {
 
 .user-info {
   /* background-color: #97c1eb; */
-  background-image: url("../assets/setting/top2.jpg");
+  background-image: url("../assets/setting/top3.jpg");
   background-size: cover;
   /* 让背景图片自适应并覆盖整个父元素 */
   /* 设置阴影 */
