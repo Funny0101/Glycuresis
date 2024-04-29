@@ -13,15 +13,20 @@
         </van-col>
     </van-row>
 
+
+    <div class="expert-dialog">
+        <h4>AI专家</h4>
+        <p>我是您的AI血糖膳食专家，请把任何您拿不定主意是否该吃的食物拍照传给我，我会给您建议。</p>
+    </div>
+
     <!-- 食物识别 -->
-    <div class="expert-suggestion">
-            <h4>AI专家:</h4>
-            <p>我是您的AI营养专家，请你把任何您拿不定主意是否该吃的食物拍照传给我，我会给您建议。</p>
-        </div>
-    <div class="food-recognition">
+    <div class="user-dialog">
+        <h4>您</h4>
         <!-- 图片上传 -->
-        <van-uploader :after-read="afterRead" v-model="fileList" multiple :max-count="1" :max-size="10 * 1024 * 1024"
-            @oversize="onOversize" preview-size="5rem" upload-text="点击上传食物" />
+        <div class="photo-wrapper">
+            <van-uploader :after-read="afterRead" v-model="fileList" multiple :max-count="1"
+                :max-size="10 * 1024 * 1024" @oversize="onOversize" preview-size="5rem" upload-text="点击上传食物" />
+        </div>
 
         <!--加载，在识别结果没有出来的时候加载-->
         <div class="loading">
@@ -31,17 +36,19 @@
                 </div>
             </van-overlay>
         </div>
-        <div class="expert-suggestion" v-show="showAISuggestion">
-            <h4>AI专家:</h4>
-            <p>{{ expertSugestion }}</p>
-        </div>
+    </div>
+    <!-- 识别结果 -->
+    <div class="expert-dialog" v-show="showAISuggestion">
+        <h4>AI专家</h4>
+        <p>{{ expertSugestion }}</p>
+        <p>(点击图片右上角的×，然后可重新选择图片)</p>
     </div>
 </template>
 
 <script>
 import { baiduPost } from "../axios/axiosConfig.js";
 import { ref } from 'vue';
-import { Notify, Overlay } from 'vant'
+import { Notify} from 'vant'
 
 export default {
     data() {
@@ -81,14 +88,14 @@ export default {
                 "messages": [
                     {
                         "role": "user",
-                        "content": "你好, 请问一下" + foodName + "能不能吃？"
+                        "content": "专家您好, 请问一下" + foodName + "能不能吃？"
                     }
                 ],
                 ///模型人设
-                "system": "你是一个糖尿病营养专家，你会回答人们关于饮食的问题，你会为他们\
-                    讲解食物的基本营养信息。你充满耐心，尽管有的人会拿一些根本不能吃的东西来问你，\
-                    你会耐心地告诉他们这东西不能吃。另外，你说话非常精炼，你只会用一句话说明某种\
-                    东西是否能吃，并介绍它的信息。"
+                "system": "你是一个糖尿病营养专家，你会回答人们关于饮食的问题，你\
+                会从血糖的角度为他们讲解这种食物。你充满耐心，尽管有的人会拿一些根\
+                本不能吃的东西来问你，你会耐心地告诉他们这东西不能吃。另外，你说话非\
+                常精炼，你只会用一句话说明某种东西是否能吃，并介绍它对人类血糖的影响。"
             }), 'application/json');
             //将返回的结果赋值给expertSugestion
             expertSugestion.value = llmResponse.result
@@ -140,35 +147,58 @@ export default {
     height: 100%;
 }
 
+.photo-wrapper {
+    display: flex;
+    align-items: right;
+    margin-right: 0.3rem;
+    justify-content: right;
+    height: 100%;
+}
+
 .top-nav {
-    height: 40px;
+    height: 1.5rem;
     /* 调整导航栏高度 */
 }
 
 .nav-title {
-    font-size: 16px;
+    font-size: 0.5rem;
     /* 调整导航栏标题字体大小 */
 }
 
-.food-recognition {
-  padding: 16px;
+.user-dialog {
+    margin-top: 0.2rem;
+    padding: 0.4rem;
+    background-color: #9ed9f75f;
+    border-radius: 3%;
 }
 
-.expert-suggestion {
-  margin-top: 16px;
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+.expert-dialog {
+    margin-top: 0.2rem;
+    padding: 0.4rem;
+    background-color: #f5f5f5;
+    border-radius: 3%;
 }
 
-.expert-suggestion h4 {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
+.expert-dialog h4 {
+    font-size: 0.45rem;
+    font-weight: bold;
+    margin-bottom: 0.1rem;
 }
 
-.expert-suggestion p {
-  font-size: 14px;
-  color: #666;
+.expert-dialog p {
+    font-size: 0.4rem;
+    color: #666;
+}
+
+.user-dialog h4 {
+    font-size: 0.45rem;
+    font-weight: bold;
+    margin-bottom: 0.1rem;
+    text-align: right;
+}
+
+.user-dialog p {
+    font-size: 0.4rem;
+    color: #666;
 }
 </style>
