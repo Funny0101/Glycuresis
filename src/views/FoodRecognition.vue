@@ -1,14 +1,33 @@
 <template>
+    <!-- 顶部导航栏 -->
+    <van-row justify="space-around" align="center">
+        <van-col span="2">
+            <van-icon name="arrow-left" @click="back" />
+        </van-col>
+        <van-col span="16" style="text-align: center;">
+            <p>查食物</p>
+        </van-col>
+        <van-col span="2">
+        </van-col>
+    </van-row>
+
+    <!-- 食物识别 -->
     <div>
-        <input type="file" id="id" name="image" class="getImgUrl_file" @change="shangc($event)"
+        <!-- html原生的图片上传和展示 -->
+        <input type="file" id="id" name="image" class="getImgUrl_file" @change="shangc_old($event)"
             accept="image/jpg, image/jpeg, image/png" />
         <br />
         <img :src="picPath" alt="">
+        <!-- 利用vant组件重新写一个图片上传-->
+        <van-uploader :after-read="afterRead" v-model="fileList" 
+        multiple :max-count="1" :max-size="10 * 1024 * 1024" 
+        @oversize="onOversize"/>
 
+        <!--加载，在识别结果没有出来的时候加载-->
 
+        <!-- 识别结果展示 -->
         <h4>识别结果:</h4>
-        <p>你这是{{ possibleObj[0].keyword }}</p>
-        <!-- <table>
+        <table>
             <tr>
                 <th>物品名称</th>
                 <th>所属类目</th>
@@ -19,7 +38,7 @@
                 <td>{{ item.root }}</td>
                 <td>{{ item.score }}</td>
             </tr>
-        </table> -->
+        </table>
         <!-- 进一步调用大模型来判断这个东西能不能吃 -->
         <h4>专家建议:</h4>
         <p>{{ expertSugestion }}</p>
@@ -28,6 +47,7 @@
 
 <script>
 import { baiduPost } from "../axios/axiosConfig.js";
+import { ref } from 'vue';
 
 export default {
     data() {
@@ -37,8 +57,36 @@ export default {
             expertSugestion: ''
         };
     },
+    setup() {
+        const afterRead = (file) => {
+            // 此时可以自行将文件上传至服务器
+            console.log(file);
+        };
+
+        const fileList = ref([
+
+        ]);
+
+        const onOversize = (file) => {
+            console.log('oversize', file);
+        };
+
+        return {
+            afterRead,
+            fileList,
+            onOversize
+        };
+    },
     methods: {
-        shangc(e) {
+        //返回上一页
+        back() {
+            this.$router.go(-1);
+        },
+        //上传图片
+        onUploaded() {
+
+        },
+        shangc_old(e) {
             let files = document.getElementById("id").files[0];
             let name = document.getElementById("id").files[0].name;
             // this.picPath=document.getElementById("id").value
@@ -93,7 +141,6 @@ export default {
                 //百度千帆大模型的调用，判断这个东西能不能吃
                 let llmAccessToken = "24.e33d91404e6b8d4255421d6728c47eea.2592000.1716889157.282335-64727061"
                 let llmUrl = '/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie-3.5-8k-0205?access_token=' + llmAccessToken
-                //注意，这里需要修改header中的content-type为application/json
 
                 const llmResponse = await baiduPost(llmUrl, JSON.stringify({
                     "messages": [
@@ -103,11 +150,13 @@ export default {
                         }
                     ],
                     ///模型人设，主要用于人设设定
-                    "system":"你是一个营养专家，你会回答人们关于饮食的问题，你会为他们讲解食物的基本营养信息。你充满耐心，尽管有的人会拿一些根本不能吃的东西来问你，你会耐心地告诉他们这东西不能吃。另外，你说话非常精炼，你只会用一句话说明某种东西是否能吃，并介绍它的信息。"
+                    "system": "你是一个糖尿病营养专家，你会回答人们关于饮食的问题，你会为他们\
+                    讲解食物的基本营养信息。你充满耐心，尽管有的人会拿一些根本不能吃的东西来问你，\
+                    你会耐心地告诉他们这东西不能吃。另外，你说话非常精炼，你只会用一句话说明某种\
+                    东西是否能吃，并介绍它的信息。"
                 }), 'application/json');
                 this.expertSugestion = llmResponse.result
-                
-                console.log(llmResponse)
+                //console.log(llmResponse)
             };
         }
     }

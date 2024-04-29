@@ -192,6 +192,12 @@
             </div>
             <div class="button-text">记饮食</div>
           </div>
+          <div class="circle-button" @click="gotoSearch">
+            <div class="circle">
+              <van-icon name="photograph" size="40" />
+            </div>
+            <div class="button-text">查食物</div>
+          </div>
         </div>
       </div>
     </van-overlay>
@@ -581,6 +587,10 @@ export default {
     gotoFood() {
       this.showPlus = false;
       this.showPicker = true;
+    },
+    gotoSearch() {
+      this.showPlus = false;
+      this.$router.push("/foodRecognition")
     },
     gotoJiLuYinShi(picker) {
       this.showPicker = false;
