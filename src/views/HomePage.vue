@@ -192,6 +192,12 @@
             </div>
             <div class="button-text">记饮食</div>
           </div>
+          <div class="circle-button" @click="gotoSearch">
+            <div class="circle">
+              <van-icon name="photograph" size="40" />
+            </div>
+            <div class="button-text">查食物</div>
+          </div>
         </div>
       </div>
     </van-overlay>
@@ -419,8 +425,8 @@ export default {
     // 查询2小时内的血糖数据
     queryBloodSugarData() {
       // 获取当前时间
-      const currentTime = new Date();
-
+      // const currentTime = new Date();
+      const currentTime = new Date(2024, 3, 11, 11, 44, 0);
       // 查询2小时内的血糖记录
       const timeRange = {
         startTime: dealTime(new Date(currentTime.getTime() - 2 * 60 * 60 * 1000)), // 当前时间减去两小时
@@ -582,6 +588,10 @@ export default {
       this.showPlus = false;
       this.showPicker = true;
     },
+    gotoSearch() {
+      this.showPlus = false;
+      this.$router.push("/foodRecognition")
+    },
     gotoJiLuYinShi(picker) {
       this.showPicker = false;
       this.selectedValue = picker;
@@ -698,7 +708,7 @@ export default {
                 color: '#333'
               },
               label: {
-                position: 'start',
+                position: 'end',
               },
               data: [
                 {

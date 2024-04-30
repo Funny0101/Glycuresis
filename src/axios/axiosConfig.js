@@ -12,7 +12,6 @@ const instance = axios.create({
 		'token': 'your token',
 		'X-Requested-With': 'XMLHttpRequest',
 	},
-
 });
 
 export var userName = "";

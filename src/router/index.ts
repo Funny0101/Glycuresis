@@ -67,11 +67,11 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }, // 这个路由需要登录权限
    },
    {
-    //饮食图片识别页面 测试阶段
+    //饮食图片识别页面
     path:"/foodRecognition",
     name:"foodRecognition",
     component: () => import( /* webpackChunkName: 'DietRecognition' */ "../views/FoodRecognition.vue"),
-    meta: { requiresAuth: false }, // 这个路由需要登录权限
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
    },
 ] 
 
