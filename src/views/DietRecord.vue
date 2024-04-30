@@ -450,7 +450,7 @@ export default {
                 // 发送 GET 请求
                 const recognizeResponse = await axios.post('/api/food/record/segrec', recognizeData);
                 // 处理识别成功的逻辑
-                console.log('识别成功', recognizeResponse.data);
+                console.log('识别成功', recognizeResponse);
                 if (recognizeResponse.data.data.message.results == null) {
                     ElMessage({
                         dangerouslyUseHTMLString: true,

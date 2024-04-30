@@ -3,7 +3,9 @@
     <!-- 页面内容 -->
     <!-- 用户信息 -->
     <div class="user-info">
-      <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+      <van-uploader v-model="avatarFileList" :max-size="500 * 1024" @oversize="onOversize">
+        <el-avatar :src="avatarSrc" />
+      </van-uploader>
       <div class="name">{{ userData.name }}</div>
       <div class="profile">{{ userData.account }}</div>
       <!-- <van-skeleton title avatar :row="3" :loading="false">
@@ -214,6 +216,7 @@ export default {
       password: '', // 密码
       rePassword: '', // 确认密码
       smsButtonDisabled: false, // 短信验证码按钮是否禁用
+      avatarSrc:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
 
       showPicker: {
         height: false,
@@ -252,7 +255,7 @@ export default {
   computed: {
     userDataChanged() {
       for (const key in this.userData) {
-        // console.log(key, this.userData[key], this.$store.state.userData[key]);
+        console.log(key, this.userData[key], this.$store.state.userData[key]);
         if (this.userData[key] != this.$store.state.userData[key]) {
           // 只判断值是否变化，而不判断类型
           return true;
@@ -286,18 +289,6 @@ export default {
         const response = await get('/user/user/getDetail');
         this.userData = response.data;
         this.$store.commit('setUserData', response.data);
-      } catch (error) {
-        // 处理登录失败的逻辑
-        console.error('失败', error);
-        if (error.response) {
-          console.error('Error Response:', error.response.data);
-        }
-      }
-    },
-    async GetAccount() {
-      try {
-        const response = await get('/user/user/get');
-        console.log('userdata', response.data);
       } catch (error) {
         // 处理登录失败的逻辑
         console.error('失败', error);
@@ -392,6 +383,11 @@ export default {
           console.error('Error Response:', error.response.data);
         }
       }
+    },
+    // 超出文件大小的回调
+    onOversize() {
+      console.log(file);
+      showToast('文件大小不能超过 500kb');
     },
   },
 }
