@@ -3,7 +3,7 @@
     <!-- 页面内容 -->
     <!-- 用户信息 -->
     <div class="user-info">
-      <van-uploader v-model="avatarFileList" :max-size="500 * 1024" @oversize="onOversize">
+      <van-uploader :max-size="500 * 1024" @oversize="onOversize" :after-read="handleAfterRead">
         <el-avatar :src="avatarSrc" />
       </van-uploader>
       <div class="name">{{ userData.name }}</div>
@@ -142,7 +142,8 @@
             <van-field v-model="sms" required center clearable label="短信验证码" placeholder="请输入验证码"
               :rules="[{ pattern: patterns.sms, message: '请输入正确内容' }]">
               <template #extra>
-                <van-button size="small" type="primary" :disabled="smsButtonDisabled" @click="getVerificationCode()">发送验证码</van-button>
+                <van-button size="small" type="primary" :disabled="smsButtonDisabled"
+                  @click="getVerificationCode()">发送验证码</van-button>
               </template>
             </van-field>
           </van-form>
@@ -211,12 +212,12 @@ import { showConfirmDialog } from 'vant';
 export default {
   data() {
     return {
-      userData: JSON.parse(JSON.stringify(this.$store.state.userData)),
+      userData: {}, // 用户信息
       sms: '', // 短信验证码
       password: '', // 密码
       rePassword: '', // 确认密码
       smsButtonDisabled: false, // 短信验证码按钮是否禁用
-      avatarSrc:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+      avatarSrc: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
 
       showPicker: {
         height: false,
@@ -255,7 +256,7 @@ export default {
   computed: {
     userDataChanged() {
       for (const key in this.userData) {
-        console.log(key, this.userData[key], this.$store.state.userData[key]);
+        // console.log(key, this.userData[key], this.$store.state.userData[key]);
         if (this.userData[key] != this.$store.state.userData[key]) {
           // 只判断值是否变化，而不判断类型
           return true;
@@ -280,21 +281,23 @@ export default {
     getUserInfo() {
       console.log('userdata', this.userData);
       if (!this.userData.account) {
-        this.GetInformation();
+        this.GetUserInfo();
       }
     },
     // 异步获取用户信息
-    async GetInformation() {
+    async GetUserInfo() {
       try {
-        const response = await get('/user/user/getDetail');
-        this.userData = response.data;
-        this.$store.commit('setUserData', response.data);
+        const userDetailRes = await get('/user/user/getDetail');
+        const userAccountRes = await get('/user/user/get');
+        this.userData = userDetailRes.data;
+        if (userAccountRes.data.profile) {
+          this.avatarSrc = userAccountRes.data.profile;
+          // console.log('头像', userAccountRes.data.profile);
+        }
+        this.$store.commit('setUserData', JSON.parse(JSON.stringify(userDetailRes.data)));
       } catch (error) {
         // 处理登录失败的逻辑
-        console.error('失败', error);
-        if (error.response) {
-          console.error('Error Response:', error.response.data);
-        }
+        console.error('获取用户详细信息失败', error);
       }
     },
     // 处理表单确认事件
@@ -388,6 +391,24 @@ export default {
     onOversize() {
       console.log(file);
       showToast('文件大小不能超过 500kb');
+    },
+    // 读取文件后的回调
+    async handleAfterRead(file) {
+      // console.log('文件', file);
+      // console.log('头像文件', file.file);
+      this.avatarSrc = URL.createObjectURL(file.file);
+      try {
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        const response = await post('/user/user/uploadProfix', {picture: file.file}, config);
+        console.log('上传头像', response);
+      }
+      catch (error) {
+        console.error('上传头像失败', error);
+      }
     },
   },
 }
