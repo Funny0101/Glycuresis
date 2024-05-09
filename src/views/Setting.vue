@@ -392,25 +392,22 @@ export default {
       console.log(file);
       showToast('文件大小不能超过 500kb');
     },
-    // 读取文件后的回调
-    async handleAfterRead(file) {  
-      try {
-        const config = {
+
+    handleAfterRead(file) {  
+      const config = {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         };
-        console.log('头像文件', file.file);
-        const formData = new FormData();
-        formData.append('file', file.file);
-        console.log('formData', formData.get('file'));
-        const response = await post('/user/user/uploadProfix', {file: formData}, config);
-        this.avatarSrc = URL.createObjectURL(file.file);
-        console.log('上传头像', response);
-      }
-      catch (error) {
-        console.error('上传头像失败', error);
-      }
+        axios
+          .post('/api/user/user/uploadProfix', { file: file.file }, config)
+          .then((res) => {
+            this.avatarSrc = URL.createObjectURL(file.file);
+            console.log('上传头像', res);
+          })
+          .catch((error) => {
+            console.log('上传头像失败', error);
+          });
     },
   },
 }
