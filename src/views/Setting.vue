@@ -393,17 +393,19 @@ export default {
       showToast('文件大小不能超过 500kb');
     },
     // 读取文件后的回调
-    async handleAfterRead(file) {
-      // console.log('文件', file);
-      // console.log('头像文件', file.file);
-      this.avatarSrc = URL.createObjectURL(file.file);
+    async handleAfterRead(file) {  
       try {
         const config = {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         };
-        const response = await post('/user/user/uploadProfix', {picture: file.file}, config);
+        console.log('头像文件', file.file);
+        const formData = new FormData();
+        formData.append('file', file.file);
+        console.log('formData', formData.get('file'));
+        const response = await post('/user/user/uploadProfix', {file: formData}, config);
+        this.avatarSrc = URL.createObjectURL(file.file);
         console.log('上传头像', response);
       }
       catch (error) {

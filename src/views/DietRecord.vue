@@ -486,7 +486,7 @@ export default {
                 alert('请选择食物');
                 return;
             }
-            console.log(this.choices);
+            console.log("用于选择的食物类别：",this.choices);
 
             // 创建请求体
             const foods = [];
@@ -501,7 +501,7 @@ export default {
                 dietId: this.dietId,
                 foods: foods,
             };
-            console.log("营养分析：", nutritionData);
+            console.log("营养分析请求体", nutritionData);
             // 调用loading服务
             const loading = ElLoading.service({
                 lock: true,
@@ -512,7 +512,7 @@ export default {
             try {
                 // 发送 POST 请求
                 const response = await axios.post('/api/food/record/nutrition', nutritionData);
-                console.log('上传成功', response.data);
+                console.log('营养分析成功', response.data);
                 this.popupVisible = false;
                 this.addedFoodList = [...this.addedFoodList, ...response.data.data.message.results];
             } catch (error) {
@@ -538,7 +538,7 @@ export default {
                     const detailRequests = this.addedFoodList.map((addedFood) => {
                         const recordDetailData = {
                             recordId: recordId,
-                            foodId: addedFood.id,
+                            foodId: addedFood.foodId,
                             foodMass: addedFood.foodMass,
                             carbohydrateMass: addedFood.carbohydrateMass,
                             fatMass: addedFood.fatMass,
