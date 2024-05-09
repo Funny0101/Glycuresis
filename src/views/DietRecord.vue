@@ -257,6 +257,23 @@ export default {
             addedFoodList: [], // 已添加食物列表
         }
     },
+    mounted() {
+        console.log('Component mounted');
+        // 类型转换
+        const mealTypeMap = {
+            breakfast: '早餐',
+            lunch: '午餐',
+            dinner: '晚餐',
+            snack: '加餐',
+        };
+        this.selectedMeal = mealTypeMap[this.meal];
+        this.fetchTags();
+
+        // this.checked = Array(this.candidateFoodList.length).fill(0);
+
+        // console.log(ElLoading);
+    },
+
     // 计算属性
     computed: {
         currentDay() {
@@ -334,21 +351,10 @@ export default {
             };
         },
     },
-    mounted() {
-        console.log('Component mounted');
-        // 类型转换
-        const mealTypeMap = {
-            breakfast: '早餐',
-            lunch: '午餐',
-            dinner: '晚餐',
-            snack: '加餐',
-        };
-        this.selectedMeal = mealTypeMap[this.meal];
-        this.fetchTags();
 
-        this.checked = Array(this.candidateFoodList.length).fill(0);
+    // 监听
+    watch:{
 
-        // console.log(ElLoading);
     },
 
     //  方法
@@ -461,6 +467,7 @@ export default {
                 }
                 this.dietId = recognizeResponse.data.data.message.dietId;
                 this.candidateFoodList = recognizeResponse.data.data.message.results;
+                this.checked = Array(this.candidateFoodList.length).fill(0);
                 this.uploaded = true;
                 console.log(this.candidateFoodList);
             } catch (error) {
@@ -486,7 +493,6 @@ export default {
                 alert('请选择食物');
                 return;
             }
-            console.log("用于选择的食物类别：",this.choices);
 
             // 创建请求体
             const foods = [];
