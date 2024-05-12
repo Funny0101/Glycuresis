@@ -451,7 +451,7 @@ export default {
                     text: '血糖值变化趋势',
                 },
                 grid: {
-                    hoverLayerThreshold: 5,  // 调整此值以适应你的需求
+                    hoverLayerThreshold: 5, // 调整此值以适应你的需求
                     left: '15%',
                     right: '15%',
                 },
