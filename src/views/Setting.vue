@@ -4,7 +4,7 @@
     <!-- 用户信息 -->
     <div class="user-info">
       <van-uploader :max-size="500 * 1024" @oversize="onOversize" :after-read="handleAfterRead">
-        <el-avatar :src="avatarSrc" />
+        <el-avatar :src="userData.profile" />
       </van-uploader>
       <div class="name">{{ userData.name }}</div>
       <div class="profile">{{ userData.account }}</div>
@@ -217,7 +217,7 @@ export default {
       password: '', // 密码
       rePassword: '', // 确认密码
       smsButtonDisabled: false, // 短信验证码按钮是否禁用
-      avatarSrc: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+      // profile: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
 
       showPicker: {
         height: false,
@@ -257,6 +257,9 @@ export default {
     userDataChanged() {
       for (const key in this.userData) {
         // console.log(key, this.userData[key], this.$store.state.userData[key]);
+        if (key === 'profile') {
+          continue; // 跳过profile属性
+        }
         if (this.userData[key] != this.$store.state.userData[key]) {
           // 只判断值是否变化，而不判断类型
           return true;
@@ -280,21 +283,24 @@ export default {
     // 获取用户信息
     getUserInfo() {
       console.log('userdata', this.userData);
-      if (!this.userData.account) {
+      if (!this.$store.state.userData.account) {
         this.GetUserInfo();
       }
+      this.userData = JSON.parse(JSON.stringify(this.$store.state.userData));
     },
     // 异步获取用户信息
     async GetUserInfo() {
       try {
         const userDetailRes = await get('/user/user/getDetail');
         const userAccountRes = await get('/user/user/get');
-        this.userData = userDetailRes.data;
+        const userDetail = userDetailRes.data;
         if (userAccountRes.data.profile) {
-          this.avatarSrc = userAccountRes.data.profile;
-          // console.log('头像', userAccountRes.data.profile);
+          userDetail.profile = userAccountRes.data.profile;
+        } else {
+          userDetail.profile = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png";
         }
-        this.$store.commit('setUserData', JSON.parse(JSON.stringify(userDetailRes.data)));
+        this.userData = userDetail;
+        this.$store.commit('setUserData', JSON.parse(JSON.stringify(userDetail)));
       } catch (error) {
         // 处理登录失败的逻辑
         console.error('获取用户详细信息失败', error);
@@ -393,21 +399,22 @@ export default {
       showToast('文件大小不能超过 500kb');
     },
 
-    handleAfterRead(file) {  
+    // 上传头像的回调函数
+    handleAfterRead(file) {
       const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        };
-        axios
-          .post('/api/user/user/uploadProfix', { file: file.file }, config)
-          .then((res) => {
-            this.avatarSrc = URL.createObjectURL(file.file);
-            console.log('上传头像', res);
-          })
-          .catch((error) => {
-            console.log('上传头像失败', error);
-          });
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+      axios
+        .post('/api/user/user/uploadProfix', { file: file.file }, config)
+        .then((res) => {
+          this.userData.profile = URL.createObjectURL(file.file);
+          console.log('上传头像', res);
+        })
+        .catch((error) => {
+          console.log('上传头像失败', error);
+        });
     },
   },
 }

@@ -544,7 +544,7 @@ export default {
                     const detailRequests = this.addedFoodList.map((addedFood) => {
                         const recordDetailData = {
                             recordId: recordId,
-                            foodId: addedFood.foodId,
+                            foodId: addedFood.id,
                             foodMass: addedFood.foodMass,
                             carbohydrateMass: addedFood.carbohydrateMass,
                             fatMass: addedFood.fatMass,
