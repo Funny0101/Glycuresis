@@ -92,6 +92,8 @@ export default {
         const circleColor = ref('#409EFF');
         const xData = ref([]);
         const yData = ref([]);
+        const xPredicted = ref([]);
+        const yPredicted = ref([]);
         return {
             show,
             showPopup,
@@ -103,6 +105,8 @@ export default {
             yData,
             showRiskyEvent,
             showRiskyEventPopup,
+            xPredicted,
+            yPredicted,
         }
     },
     data() {
@@ -245,17 +249,85 @@ export default {
                     this.xData = x;
                     this.yData = y;
 
-                    //更新血糖折线图表
-                    this.bloodSugarChart.setOption({
-                        xAxis: {
-                            data: this.xData
-                        },
-                        series: [
-                            {
-                                data: this.yData
+                    const isEdtCurrentTimeAndOneDayDifference = (sdt, edt) => {
+                        // 忽略秒
+                        const startTime = new Date(sdt).toISOString().slice(0,-8);
+                        const endTime = new Date(edt).toISOString().slice(0,-8);
+                        const curTime = this.globalEDT.toISOString().slice(0,-8);
+                        const isEdtCurrentTime = curTime === endTime;
+                        const isOneDayDifference = new Date(endTime) - new Date(startTime) == 86400000;
+                        return isEdtCurrentTime && isOneDayDifference;
+                    };
+                    // 当选择的终止时间为当前时间且起始时间为1天前时，获取并显示预测结果
+                    if (isEdtCurrentTimeAndOneDayDifference(sdt, edt)) {
+                        // 获取血糖预测数据
+                        try {
+                            const response = await get('food/glucose/getPredictGlucose');
+                            const { code, msg, data, message } = response;
+                            if (code == 200) {
+                                this.xPredicted = [];
+                                this.yPredicted = [];
+                                data.precict.forEach(ele => {
+                                    this.xPredicted.push(ele.time);
+                                    this.yPredicted.push(ele.value);
+                                });
+                                console.log('Predicted:', this.xPredicted, this.yPredicted);
                             }
-                        ]
-                    });
+                            else {
+                                console.log('获取血糖预测结果失败');
+                            }
+                        } catch (error) {
+                            console.log('获取血糖预测结果失败', error);
+                        }
+                        
+                        const xRealData = this.xData.slice(); // 使用 slice() 来避免直接修改原始数组
+                        const yRealData = this.yData.slice();
+                        const yPredictedData = this.yPredicted.slice();
+                        const n = yPredictedData.length;
+                        const m = yRealData.length;
+                        xRealData.push(...this.xPredicted);
+                        // 在实际数据的末尾添加 n 个 null
+                        yRealData.push(...new Array(n).fill(null));
+                        // 在预测数据的开头添加 m 个 null
+                        yPredictedData.unshift(...new Array(m).fill(null));
+
+                        this.bloodSugarChart.setOption({
+                            xAxis: {
+                                data: xRealData
+                            },
+                            series: [
+                                {
+                                    // 原始血糖数据的配置
+                                    name: 'Real',
+                                    data: yRealData,
+                                },
+                                {
+                                    // 预测血糖数据的配置
+                                    name: 'Predicted',
+                                    data: yPredictedData,
+                                }
+                            ]
+                        });
+                    }
+                    else {
+                        //更新血糖折线图表
+                        this.bloodSugarChart.setOption({
+                            xAxis: {
+                                data: this.xData
+                            },
+                            series: [
+                                {
+                                    name: 'Real',
+                                    data: this.yData,
+                                },
+                                {
+                                    name: 'Predicted',
+                                    data: [],
+                                }
+                            ]
+                        });
+                    }
+                    
                     //更新血糖柱状图表
                     this.bloodSugarBarChart.setOption({
                         series: [
@@ -276,7 +348,6 @@ export default {
                 else {
                     this.$toast('获取血糖数据失败');
                 }
-
             } catch (error) {
                 console.log(error);
             }
@@ -461,23 +532,31 @@ export default {
                 xAxis: {
                     name: "时间",
                     data: [],
+                    axisLabel: {
+                        formatter: function (value) {
+                            // value 是 x 轴的标签文本，即时间字符串
+                            // 如将 '2024-05-15 14:44:00' 截取为 '14:44:00'
+                            return value.replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
+                        }
+                    }
                 },
                 dataZoom: [ // 这个dataZoom组件，默认控制x轴。
                     {
                         type: 'slider',
-                        start: 50,
-                        end: 70,
+                        start: 0,
+                        end: 100,
                         zoomLock: true,
                     },
                     {
                         type: 'inside',
-                        start: 50,
-                        end: 70,
+                        start: 0,
+                        end: 100,
                         zoomLock: true,
                     }
                 ],
                 yAxis: {
-                    name: "血糖值(mmol/L)"
+                    name: "血糖值(mmol/L)",
+                    min: 0
                 },
                 toolbox: {
                     show: true,
@@ -524,6 +603,7 @@ export default {
                 },
                 series: [
                     {
+                        name: 'Real',
                         data: [],
                         type: "line", // 类型设置为折线图
                         areaStyle: {},
@@ -571,9 +651,19 @@ export default {
                                 },
                                 {
                                     yAxis: 16.7
-                                }
+                                },
                             ]
-                        }
+                        },
+                        showSymbol: false,
+                    },
+                    {
+                        name: 'Predicted',
+                        data: [],
+                        type: 'line',
+                        lineStyle: {
+                            type: 'dashed', // 虚线
+                        },
+                        showSymbol: false,
                     }
                 ]
             };

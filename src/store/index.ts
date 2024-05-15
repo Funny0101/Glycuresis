@@ -5,8 +5,10 @@ import { createStore } from 'vuex'
 export default createStore({
     state:{
         statsTabActiveIndex: 0,
-        globalSDT: new Date(2024, 0, 1, 7, 20, 21),
-        globalEDT: new Date(2024, 0, 4, 14, 20, 21),
+        // globalSDT: new Date(2024, 0, 1, 7, 20, 21),
+        // globalEDT: new Date(2024, 0, 4, 14, 20, 21),
+        globalEDT: new Date(),
+        globalSDT: new Date(new Date().setDate(new Date().getDate() - 1)),
         userData:{},
     },
     mutations:{
