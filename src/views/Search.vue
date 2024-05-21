@@ -2,11 +2,17 @@
   <!-- 选择地区 -->
   <div  v-if="showSelectArea" class="search">
     <div class="food-container">
-      <div class="fixed_top">
-      <!-- 页面内容 -->
+      <van-nav-bar title="推荐食谱"
+        left-arrow 
+        left-text="返回"
+        @click-left="()=>{this.$router.go(-1);}" 
+        style="--van-nav-bar-title-font-size: 18px;"
+        >
+      </van-nav-bar>
+      <!-- <div class="fixed_top">
         <h1 class="page_title">推荐食谱</h1>
         <hr>
-      </div>
+      </div> -->
     </div>
 
     <div class="choice-container">
@@ -17,12 +23,6 @@
       </div>
     </div>
 
-    <!-- <van-grid :column-num="1" :gutter="10" :clickable="true" :direction="horizonal">
-      <van-grid-item v-for="(item, index) in items" :key="index"
-        @click="showArea(item.area)">
-        <img :src="require(`@/assets/food_icon/${item.iconName}`)" :style="{ width: iconAreaSize, height: iconAreaSize }"/>{{ item.title }}
-      </van-grid-item>
-    </van-grid> -->
 
     <!-- <div class="block-container">
       <div class="block_wrapper">
@@ -49,121 +49,133 @@
   </div>
 
 
-     <div v-if="!showSelectArea">
-        
-      <!-- 横向滑动的tab栏(季节) -->
-      <van-tabs  v-model:active="activeSeason" sticky @change="onChangeTabSeason"  swipeable class="tab-season">
-        <van-tab v-for="(season, index) in seasons" :key="index" :title="season.name" >
-        </van-tab>
-      </van-tabs>
-      <!-- 横向滑动的tab栏(数字) -->
-      <van-tabs  v-model:active="activeNumber" sticky @change="onChangeTabNumber"  swipeable class="tab-number">
-        <van-tab v-for="(number, index) in numbers" :key="index" :title="number.name">
-        </van-tab>
-      </van-tabs>
+  <div v-else>
+  <!-- 横向滑动的tab栏(季节) -->
+  <van-tabs  v-model:active="activeSeason" 
+    sticky 
+    @change="onChangeTabSeason"  
+    swipeable 
+    color="green"
+    class="tab-season"
+    >
+    <van-tab v-for="(season, index) in seasons" :key="index" :title="season.name" >
+    </van-tab>
+  </van-tabs>
+  <!-- 横向滑动的tab栏(数字) -->
+  <van-tabs  v-model:active="activeNumber" 
+    sticky 
+    @change="onChangeTabNumber" 
+    swipeable 
+    color="green"
+    class="tab-number"
+    >
+    <van-tab v-for="(number, index) in numbers" :key="index" :title="number.name">
+    </van-tab>
+  </van-tabs>
 
-      <div v-if="isLoading" class="loading-container">
-       <van-loading :size="30" :text="loadingText" />
+  <div v-if="isLoading" class="loading-container">
+    <van-loading :size="30" :text="loadingText" />
+  </div>
+
+  <!-- 食谱描述 -->
+  <div class="recipe" v-if="!isLoading" >
+    <van-icon name="close" class="closeIcon" @click="falseShowRecipe" />
+
+  <div class="divider-title">食谱详情</div>
+  <!-- 早餐卡片 -->
+  <div class="every_meal" style="background-color: #d7f4e3;">
+    <div class="vertical-line-zao"></div>
+    <span class="mytitle">早餐</span>
+      <div class="card">
+        <ul>
+            <li  v-for="(item, index) in recipe.breakfast" :key="index"  
+            style="font-size: 16px;">{{ item }}</li>
+        </ul>
       </div>
+  </div>
+<!-- 午餐卡片 -->
+  <div class="every_meal" style="background-color: #f2c4ab;">
+    <div class="vertical-line-zhong"></div>
+    <span class="mytitle">午餐</span>
+      <div class="card">
+        <ul>
+            <li  v-for="(item, index) in recipe.lunch" :key="index"  
+            style="font-size: 16px;">{{ item }}</li>
+        </ul>
+      </div>
+  </div>
+    <!-- 晚餐卡片 -->
+    <div class="every_meal" style="background-color: #bde6f8;">
+      <div class="vertical-line-wan"></div>
+      <span class="mytitle">晚餐</span>      
+      <div class="card">
+        <ul>
+            <li  v-for="(item, index) in recipe.dinner" :key="index"  
+            style="font-size: 16px;">{{ item }}</li>
+        </ul>
+      </div>
+  </div>
+  <!-- 油盐卡片 -->
+  <div class="every_meal" style="background-color: #e7c4ee;">
+    <div class="vertical-line-salt"></div>
+    <span class="mytitle">油盐</span>
+    <div class="card">
+      <span style="font-size: 16px;">{{ recipe.salt}}</span>
+    </div>
+  </div>
 
-      <!-- 食谱描述 -->
-     <div class="recipe" v-if="!isLoading" >
-         <van-icon name="close" class="closeIcon" @click="falseShowRecipe" />
- 
-     <!-- 早餐卡片 -->
-     <div class="every_meal">
-         <div class="vertical-line-zao"></div>
-         <span class="mytitle">早餐</span>
-         <div class="card">
-             <ul>
-                 <li  v-for="(item, index) in recipe.breakfast" :key="index"  
-                 style="font-size: 16px;">{{ item }}</li>
-             </ul>
-         </div>
-     </div>
-    <!-- 午餐卡片 -->
-     <div class="every_meal">
-         <div class="vertical-line-zhong"></div>
-         <span class="mytitle">午餐</span>
-         <div class="card">
-             <ul>
-                 <li  v-for="(item, index) in recipe.lunch" :key="index"  
-                 style="font-size: 16px;">{{ item }}</li>
-             </ul>
-         </div>
-     </div>
-       <!-- 晚餐卡片 -->
-       <div class="every_meal">
-         <div class="vertical-line-wan"></div>
-         <span class="mytitle">晚餐</span>
-         <div class="card">
-             <ul>
-                 <li  v-for="(item, index) in recipe.dinner" :key="index"  
-                 style="font-size: 16px;">{{ item }}</li>
-             </ul>
-         </div>
-     </div>
-      <!-- 油盐卡片 -->
-      <div class="every_meal">
-         <div class="vertical-line-salt"></div>
-         <span class="mytitle">油盐</span>
-         <div class="card_salt">
-            <span style="font-size: 16px;">{{ recipe.salt}}</span>
-         </div>
-     </div>
- 
-     <div class="divider"></div>
-     <span style="font-size: 25px;">营养成分</span>
-     <div >
-         <div>
-             <span style="font-size: 20px;">能量：</span>
-             <span style="font-size: 20px;">{{ recipe.energy }}</span>
-         </div>
-            <div class="table">
-                <div class="row">
-                    <div class="cell">名称</div>
-                    <div class="cell">含量</div>
-                    <div class="cell">供能比</div>
-                </div>
-                <div class="row">
-                    <div class="cell">
-                    <span class="square_carbon"></span>碳水化合物
-                    </div>
-                    <div class="cell">{{recipe.carbon}}</div>
-                    <div class="cell">{{recipe.carbon_rate}}</div>
-                </div>
-                <div class="row">
-                    <div class="cell">
-                    <span class="square_protein"></span>蛋白质
-                    </div>
-                    <div class="cell">{{recipe.protein}}</div>
-                    <div class="cell">{{recipe.protein_rate}}</div>
-                </div>
-                <div class="row">
-                    <div class="cell">
-                    <span class="square_fat"></span>脂肪
-                    </div>
-                    <div class="cell">{{recipe.fat}}</div>
-                    <div class="cell">{{recipe.fat_rate}}</div>
-                </div>
-            </div>
-          </div>
+  <div class="divider"></div>
+  <div class="divider-title">营养成分</div>
+  <!-- <div class="nutrient-block"> -->
+    <div class="energy-data">能量: {{ recipe.energy }}</div>
+    <el-table :data="recipeData" stripe border="true">
+      <el-table-column prop="name" label="名称" width="120"></el-table-column>
+      <el-table-column prop="content" label="含量" width="130"></el-table-column>
+      <el-table-column prop="energyRatio" label="供能比" width="150"></el-table-column>
+    </el-table>
+    <!-- <div class="table">
+        <div class="row">
+            <div class="cell">名称</div>
+            <div class="cell">含量</div>
+            <div class="cell">供能比</div>
         </div>
-      </div>
+        <div class="row">
+            <div class="cell">
+            <span class="square_carbon"></span>碳水化合物
+            </div>
+            <div class="cell">{{recipe.carbon}}</div>
+            <div class="cell">{{recipe.carbon_rate}}</div>
+        </div>
+        <div class="row">
+            <div class="cell">
+            <span class="square_protein"></span>蛋白质
+            </div>
+            <div class="cell">{{recipe.protein}}</div>
+            <div class="cell">{{recipe.protein_rate}}</div>
+        </div>
+        <div class="row">
+            <div class="cell">
+            <span class="square_fat"></span>脂肪
+            </div>
+            <div class="cell">{{recipe.fat}}</div>
+            <div class="cell">{{recipe.fat_rate}}</div>
+        </div>
+    </div> -->
+  <!-- </div> -->
+  </div>
+  </div>
     
-  
-
-
-   
-
-
-
 
 
 
 
     <!-- 底部导航栏 -->
-   
+    <van-tabbar route>
+      <van-tabbar-item icon="home-o" text="首页" to="/home" />
+      <van-tabbar-item icon="search" text="搜索" to="/search" />
+      <van-tabbar-item icon="chart-trending-o" text="朋友" to="/friends" />
+      <van-tabbar-item icon="setting" text="设置" to="/setting" />
+    </van-tabbar>
 </template>
 
 <script>
@@ -196,6 +208,8 @@ export default {
           fat:'',
           fat_rate:'',
       },
+
+      recipeData: [],
       
       value: '',
       items: [
@@ -291,17 +305,31 @@ export default {
 
               
                 this.recipe.energy = response.data.energy;
-
                 this.recipe.carbon = response.data.carbohydrateMass;
                 this.recipe.carbon_rate = response.data.carbohydrateEnergyRatio;
-
                 this.recipe.fat = response.data.fatMass;
                 this.recipe.fat_rate = response.data.fatEnergyRatio;
-
                 this.recipe.protein = response.data.proteinMass;
                 this.recipe.protein_rate = response.data.proteinEnergyRatio;
-
                 this.recipe.salt = response.data.oilSalt;
+
+                this.recipeData = [
+                  {
+                    name: '碳水化合物',
+                    content: this.recipe.carbon,
+                    energyRatio: this.recipe.carbon_rate
+                  },
+                  {
+                    name: '蛋白质',
+                    content: this.recipe.protein,
+                    energyRatio: this.recipe.protein_rate
+                  },
+                  {
+                    name: '脂肪',
+                    content: this.recipe.fat,
+                    energyRatio: this.recipe.fat_rate
+                  }
+                ];
                 console.log('recipe', this.recipe);
                 this.isLoading = false; // 隐藏加载状态
           })
@@ -373,63 +401,72 @@ export default {
 /* 食谱样式 */
 
 .recipe{
-  
-    display: flex; /* 设置为弹性容器 */
+  display: flex; /* 设置为弹性容器 */
   flex-direction: column; /* 设置为纵向排列 */
-    height:650px;
-    
+  height:650px;  
   overflow-y: auto; /* 当内容溢出时显示滚动条 */
 }
 .every_meal{
-  display: flex; /* 设置为弹性容器 */
-  /* justify-content: space-between;  *//* 在弹性容器中，将项目以最大间距分布  */
- 
+  display: flex;/* 设置为弹性容器 */
   align-items: center; /* 在交叉轴上垂直居中 */
-  border-radius: 2px;
-  margin:0 30px 0 30px;
+  border-radius: 10px;
+  margin:5px 15px 5px 15px;
+  box-shadow: 0 0 5px rgb(81, 79, 79);
 }
 
- .vertical-line-zao{
-    border-left: 5px solid #6fffa9; /* 设置竖线的样式 */
-    height: 40px; /* 设置竖线的高度 */
+.vertical-line-zao{
+  border-left: 5px solid #6fffa9; /* 设置竖线的样式 */
+  height: 40px; /* 设置竖线的高度 */
   border-radius: 5px; /* 设置竖线的角为圆角 */
 }
 
- .vertical-line-zhong{
-    border-left: 5px solid #f79254; /* 设置竖线的样式 */
-    height: 40px; /* 设置竖线的高度 */
+.vertical-line-zhong{
+  border-left: 5px solid #f79254; /* 设置竖线的样式 */
+  height: 40px; /* 设置竖线的高度 */
   border-radius: 5px; /* 设置竖线的角为圆角 */
 }
 
  .vertical-line-wan{
-    border-left: 5px solid #00a0e4; /* 设置竖线的样式 */
-    height: 40px; /* 设置竖线的高度 */
+  border-left: 5px solid #00a0e4; /* 设置竖线的样式 */
+  height: 40px; /* 设置竖线的高度 */
   border-radius: 5px; /* 设置竖线的角为圆角 */
 }
 .vertical-line-salt{
-    border-left: 5px solid #b878c5; /* 设置竖线的样式 */
-    height: 40px; /* 设置竖线的高度 */
+  border-left: 5px solid #b878c5; /* 设置竖线的样式 */
+  height: 40px; /* 设置竖线的高度 */
   border-radius: 5px; /* 设置竖线的角为圆角 */
 }
 .card{
-  border: 1px solid #000; /* 黑色边框 */
-  border-radius: 20px; /* 圆角矩形 */
-  padding: 10px;
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  border-radius: 10px; 
+  padding: 10px 10px;
   margin-bottom: 10px;
-  width:75%;
+  margin-top: 10px;
+  margin-left: 5px;
+  margin-right: 10px;
+  width: 78%; 
   /* height:140px; */
+  text-align:left center;
+  font-size: 14px;
+  font-family: 'Times New Roman', Times, serif;
+  background-color: white;
 }
+/**
 .card_salt{
-  border: 1px solid #000; /* 黑色边框 */
-  border-radius: 20px; /* 圆角矩形 */
-  padding: 10px;
+  border: 1px solid #000; 
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  border-radius: 10px; 
+  padding: 0 10px;
   margin-bottom: 10px;
   width:75%;
   
-}
+} 
+**/
 .mytitle{
     font-size:20px;
-    margin-right: 30px; /* 添加右侧间距 */
+    margin-right: 10px; 
+    margin-left: 5px;
+    font-weight: 400;
 }   
 .closeIcon {
     position: fixed;
@@ -480,7 +517,7 @@ export default {
   border-radius: 2px;
 }
 .square_fat{
-    display: inline-block;
+  display: inline-block;
   width: 12px;
   height: 12px;
   background-color: #eccf41;
@@ -488,11 +525,12 @@ export default {
   border-radius: 2px;
 }
 .tab-season {
-  margin-top: 30px; /* 向下移动 Tab */
+  margin-top: 30px; 
 }
 
 .tab-number {
-  margin-top: 20px; /* 向下移动 Tab */
+  margin-top: 0px; 
+  margin-bottom: 10px;
 }
 
 .loading-container {
@@ -551,7 +589,27 @@ export default {
   margin-right: 10px;
 }
 
+.divider-title {
+  font-size: 20px;
+  font-weight: 500;
+  font-style: italic;
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
 
+.energy-data {
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, serif;
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+.nutrient-block {
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  margin-left: 15px;
+  margin-right: 15px;
+  border-radius: 5px;
+}
 
 .van-grid-item {
   font-size: medium;

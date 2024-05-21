@@ -1029,7 +1029,7 @@ export default {
 
 .func-grid > .item .tips .text-container {
   text-align: left;
-  font-size: medium;
+  font-size: 14px;
   font-family:'Times New Roman', Times, serif;
 }
 
