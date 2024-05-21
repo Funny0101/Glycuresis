@@ -129,7 +129,7 @@
           </div>
           <div class="text-container">
             <div class="data-info">
-              <div class="data">已摄入: {{ intake.calories }} cal</div>
+              <div class="data">已摄入: {{ intake.calories }} 千卡</div>
               <div class="info" v-if="mealRecord.breakfast === 0">早餐未上传</div>
               <div class="info" v-else-if="mealRecord.lunch === 0">午餐未上传</div>
               <div class="info" v-else-if="mealRecord.dinner === 0">晚餐未上传</div>

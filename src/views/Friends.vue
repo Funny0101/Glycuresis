@@ -1,6 +1,12 @@
 <template>
   <div class="health-data">
-    <van-nav-bar title="记录统计" left-arrow @click-left="goBack()"></van-nav-bar>
+    <van-nav-bar title="记录统计" 
+      left-arrow 
+      @click-left="goBack()" 
+      left-text="返回"
+      style="--van-nav-bar-title-font-size: 18px;"
+      >
+    </van-nav-bar>
     <!-- 如果标签被点击则输出 -->
     <van-tabs v-model:active="active" :line-width="80" color="#1989fa" @change="handleTabChange">
       <van-tab title="血糖数据"></van-tab>

@@ -2,20 +2,21 @@
     <div>
         <!-- 时间显示器 -->
         <div class="time-selector">
-            <van-row type="flex" justify="space-around" gutter="10">
-                <van-col :span="12" class="time-col">
+            <van-row type="flex" gutter="10">
+                <van-col :span="11" class="time-col">
                     <!-- 开始时间选择按钮 -->
                     <van-button type="primary" icon="clock-o" class="time-button" @click="showStartDateTimePicker = true">
-                        {{ startDateTimeFormatted }}
+                        {{ startDateTimeFormatted.slice(0,-3) }}
                     </van-button>
-                    <div class="time-label">开始时间</div>
+                    <!-- <div class="time-label">开始时间</div> -->
                 </van-col>
-                <van-col :span="12" class="time-col">
+                <van-col style="font-size:24px; text-align:center;">~</van-col>
+                <van-col :span="11" class="time-col">
                     <!-- 结束时间选择按钮 -->
                     <van-button type="primary" icon="clock-o" class="time-button" @click="showEndDateTimePicker = true">
-                        {{ endDateTimeFormatted }}
+                        {{ endDateTimeFormatted.slice(0,-3) }}
                     </van-button>
-                    <div class="time-label">结束时间</div>
+                    <!-- <div class="time-label">结束时间</div> -->
                 </van-col>
             </van-row>
         </div>
@@ -870,9 +871,17 @@ export default {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    padding: 0.3rem;
+    padding: 0.2rem;
     /* 内部内容居中 */
     align-items: center;
+}
+
+.time-selector .van-button {
+    border-radius: 30px;
+    border-color: rgb(109, 162, 242);
+    border-width: 2px;
+    background-color: white;
+    -webkit-text-fill-color: black;
 }
 
 .time-label {
