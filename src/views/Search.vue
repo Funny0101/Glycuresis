@@ -1,19 +1,32 @@
 <template>
   <!-- 选择地区 -->
-  <div  v-if="showSelectArea">
-    <div class="food_container">
+  <div  v-if="showSelectArea" class="search">
+    <div class="food-container">
       <div class="fixed_top">
       <!-- 页面内容 -->
         <h1 class="page_title">推荐食谱</h1>
+        <hr>
       </div>
     </div>
 
-    <!-- 上下滑动的视图 -->
-    <div class="block-container">
+    <div class="choice-container">
+      <div class="choice-box">
+        <div v-for="(item, index) in items" :key="index" class="choice-block"  @click="showArea(item.area)">
+          <img :src="require(`@/assets/food_icon/${item.iconName}`)"/>{{ item.title }}
+        </div>
+      </div>
+    </div>
+
+    <!-- <van-grid :column-num="1" :gutter="10" :clickable="true" :direction="horizonal">
+      <van-grid-item v-for="(item, index) in items" :key="index"
+        @click="showArea(item.area)">
+        <img :src="require(`@/assets/food_icon/${item.iconName}`)" :style="{ width: iconAreaSize, height: iconAreaSize }"/>{{ item.title }}
+      </van-grid-item>
+    </van-grid> -->
+
+    <!-- <div class="block-container">
       <div class="block_wrapper">
-        <!-- 方块 -->
         <div v-for="(item, index) in items" :key="index" class="block"  @click="showArea(item.area)">
-          <!-- 每行两个方块 -->
           <div class="block_content">
             <div class="block_title">
               <img :src="require(`@/assets/food_icon/${item.iconName}`)" 
@@ -23,7 +36,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- 底部导航栏 -->
       <van-tabbar route>
@@ -32,7 +45,7 @@
         <van-tabbar-item icon="chart-trending-o" text="朋友" to="/friends" />
         <van-tabbar-item icon="setting" text="设置" to="/setting" />
       </van-tabbar>
-    </div>
+    <!-- </div> -->
   </div>
 
 
@@ -186,13 +199,13 @@ export default {
       
       value: '',
       items: [
-      { title: '东北地区食谱',  iconName: 'Cake.png',area:'东北'},
-      { title: '西北地区食谱',  iconName: 'Zongzi(Chinese food).png',area:'西北'},
-      { title: '华北地区食谱',  iconName: 'Sandwich.png',area:'华北'},
-      { title: '华东地区食谱',  iconName: 'Pizza.png',area:'华东'},
-      { title: '华中地区食谱',  iconName: 'Icon_fruits.png',area:'华中'},
-      { title: '西南地区食谱',  iconName: 'Pistachio.png',area:'西南'},
-      { title: '华南地区食谱',  iconName: 'Icon_cheese.png',area:'华南'},           
+      { title: '东北地区食谱',  iconName: 'Jiaozi.png',area:'东北'},
+      { title: '西北地区食谱',  iconName: 'Noodles.png',area:'西北'},
+      { title: '华北地区食谱',  iconName: 'Kaoya.png',area:'华北'},
+      { title: '华东地区食谱',  iconName: 'Zongzi.png',area:'华东'},
+      { title: '华中地区食谱',  iconName: 'Baozi.png',area:'华中'},
+      { title: '西南地区食谱',  iconName: 'Yuanyang.png',area:'西南'},
+      { title: '华南地区食谱',  iconName: 'Tofu.png',area:'华南'},           
       // ... 
       ],
       activeTabSeason: 0,
@@ -494,4 +507,55 @@ export default {
   background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
   z-index: 9999; /* 确保 Loading 组件在顶层 */
 }
+
+/* newly added */
+.search {
+}
+
+.choice-container {
+  display: flex;
+  flex-wrap: wrap; /* 允许换行 */
+  margin-left: 0px;
+  margin-right: 0px;
+  /*background-color: #6fffa9;*/
+  border-radius: 5%;
+}
+
+.choice-container > .choice-box {
+  margin-top: 10px;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.choice-container >.choice-box .choice-block {
+  width: 100%;
+  height: 50px;
+  display: flex; /* 子元素也使用Flexbox布局 */
+  align-items: center; /* 垂直居中对齐 */
+  margin-bottom: 15px; 
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  background-color: white;
+  border-radius: 10px;
+  padding: 0 10px;
+  text-wrap: wrap;
+  text-align: left;
+  font-weight: 400;
+  font-size: large;
+}
+
+.choice-container >.choice-box .choice-block img {
+  width: 35px;
+  object-fit: cover;
+  height: auto;
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+
+
+.van-grid-item {
+  font-size: medium;
+}
+
+
 </style>
