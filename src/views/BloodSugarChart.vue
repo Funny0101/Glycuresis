@@ -248,7 +248,7 @@ export default {
                     }
                     this.xData = x;
                     this.yData = y;
-
+                    console.log('Data', this.xData, this.yData);
                     const isEdtCurrentTimeAndOneDayDifference = (sdt, edt) => {
                         // 忽略秒
                         const startTime = new Date(sdt).toISOString().slice(0,-8);

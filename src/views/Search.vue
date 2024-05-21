@@ -1,40 +1,39 @@
 <template>
-      <!-- 选择地区 -->
-      <div  v-if="showSelectArea">
-        <div class="food_container">
-          <div class="fixed_top">
+  <!-- 选择地区 -->
+  <div  v-if="showSelectArea">
+    <div class="food_container">
+      <div class="fixed_top">
       <!-- 页面内容 -->
-            <h1 class="page_title">推荐食谱</h1>
+        <h1 class="page_title">推荐食谱</h1>
+      </div>
+    </div>
+
+    <!-- 上下滑动的视图 -->
+    <div class="block-container">
+      <div class="block_wrapper">
+        <!-- 方块 -->
+        <div v-for="(item, index) in items" :key="index" class="block"  @click="showArea(item.area)">
+          <!-- 每行两个方块 -->
+          <div class="block_content">
+            <div class="block_title">
+              <img :src="require(`@/assets/food_icon/${item.iconName}`)" 
+                class="block_icon" 
+                :style="{ width: iconAreaSize, height: iconAreaSize }"/>
+              {{ item.title }}
+            </div>
           </div>
         </div>
+      </div>
 
-
-          <!-- 上下滑动的视图 -->
-             <div class="block-container">
-             <div class="block_wrapper">
-                 <!-- 方块 -->
-                 <div v-for="(item, index) in items" :key="index" class="block"  @click="showArea(item.area)">
-                 <!-- 每行两个方块 -->
-                 <div class="block_content">
-                     
-                     <div class="block_title">
-                     <img :src="require(`@/assets/food_icon/${item.iconName}`)" 
-                     class="block_icon" 
-                     :style="{ width: iconAreaSize, height: iconAreaSize }"/>
-                     {{ item.title }}
-                  </div>
-                     
-              </div>
-              </div>
-        </div>
-        <van-tabbar route>
-      <van-tabbar-item icon="home-o" text="首页" to="/home" />
-      <van-tabbar-item icon="search" text="搜索" to="/search" />
-      <van-tabbar-item icon="chart-trending-o" text="朋友" to="/friends" />
-      <van-tabbar-item icon="setting" text="设置" to="/setting" />
-    </van-tabbar>
+      <!-- 底部导航栏 -->
+      <van-tabbar route>
+        <van-tabbar-item icon="home-o" text="首页" to="/home" />
+        <van-tabbar-item icon="search" text="搜索" to="/search" />
+        <van-tabbar-item icon="chart-trending-o" text="朋友" to="/friends" />
+        <van-tabbar-item icon="setting" text="设置" to="/setting" />
+      </van-tabbar>
+    </div>
   </div>
-</div>
 
 
      <div v-if="!showSelectArea">
@@ -55,13 +54,13 @@
       </div>
 
       <!-- 食谱描述 -->
-     <div class  = "recipe" v-if="!isLoading" >
+     <div class="recipe" v-if="!isLoading" >
          <van-icon name="close" class="closeIcon" @click="falseShowRecipe" />
  
      <!-- 早餐卡片 -->
-     <div class = "every_meal">
+     <div class="every_meal">
          <div class="vertical-line-zao"></div>
-         <span class = "mytitle">早餐</span>
+         <span class="mytitle">早餐</span>
          <div class="card">
              <ul>
                  <li  v-for="(item, index) in recipe.breakfast" :key="index"  
@@ -70,9 +69,9 @@
          </div>
      </div>
     <!-- 午餐卡片 -->
-     <div class = "every_meal">
+     <div class="every_meal">
          <div class="vertical-line-zhong"></div>
-         <span class = "mytitle">午餐</span>
+         <span class="mytitle">午餐</span>
          <div class="card">
              <ul>
                  <li  v-for="(item, index) in recipe.lunch" :key="index"  
@@ -81,9 +80,9 @@
          </div>
      </div>
        <!-- 晚餐卡片 -->
-       <div class = "every_meal">
+       <div class="every_meal">
          <div class="vertical-line-wan"></div>
-         <span class = "mytitle">晚餐</span>
+         <span class="mytitle">晚餐</span>
          <div class="card">
              <ul>
                  <li  v-for="(item, index) in recipe.dinner" :key="index"  
@@ -92,9 +91,9 @@
          </div>
      </div>
       <!-- 油盐卡片 -->
-      <div class = "every_meal">
+      <div class="every_meal">
          <div class="vertical-line-salt"></div>
-         <span class = "mytitle">油盐</span>
+         <span class="mytitle">油盐</span>
          <div class="card_salt">
             <span style="font-size: 16px;">{{ recipe.salt}}</span>
          </div>
@@ -107,34 +106,34 @@
              <span style="font-size: 20px;">能量：</span>
              <span style="font-size: 20px;">{{ recipe.energy }}</span>
          </div>
-                 <div class="table">
-                     <div class="row">
-                         <div class="cell">名称</div>
-                         <div class="cell">含量</div>
-                         <div class="cell">供能比</div>
-                     </div>
-                     <div class="row">
-                         <div class="cell">
-                         <span class="square_carbon"></span>碳水化合物
-                         </div>
-                         <div class="cell">{{recipe.carbon}}</div>
-                         <div class="cell">{{recipe.carbon_rate}}</div>
-                     </div>
-                     <div class="row">
-                         <div class="cell">
-                         <span class="square_protein"></span>蛋白质
-                         </div>
-                         <div class="cell">{{recipe.protein}}</div>
-                         <div class="cell">{{recipe.protein_rate}}</div>
-                     </div>
-                     <div class="row">
-                         <div class="cell">
-                         <span class="square_fat"></span>脂肪
-                         </div>
-                         <div class="cell">{{recipe.fat}}</div>
-                         <div class="cell">{{recipe.fat_rate}}</div>
-                     </div>
-                 </div>
+            <div class="table">
+                <div class="row">
+                    <div class="cell">名称</div>
+                    <div class="cell">含量</div>
+                    <div class="cell">供能比</div>
+                </div>
+                <div class="row">
+                    <div class="cell">
+                    <span class="square_carbon"></span>碳水化合物
+                    </div>
+                    <div class="cell">{{recipe.carbon}}</div>
+                    <div class="cell">{{recipe.carbon_rate}}</div>
+                </div>
+                <div class="row">
+                    <div class="cell">
+                    <span class="square_protein"></span>蛋白质
+                    </div>
+                    <div class="cell">{{recipe.protein}}</div>
+                    <div class="cell">{{recipe.protein_rate}}</div>
+                </div>
+                <div class="row">
+                    <div class="cell">
+                    <span class="square_fat"></span>脂肪
+                    </div>
+                    <div class="cell">{{recipe.fat}}</div>
+                    <div class="cell">{{recipe.fat_rate}}</div>
+                </div>
+            </div>
           </div>
         </div>
       </div>
@@ -193,10 +192,9 @@ export default {
       { title: '华东地区食谱',  iconName: 'Pizza.png',area:'华东'},
       { title: '华中地区食谱',  iconName: 'Icon_fruits.png',area:'华中'},
       { title: '西南地区食谱',  iconName: 'Pistachio.png',area:'西南'},
-      { title: '华南地区食谱',  iconName: 'Icon_cheese.png',area:'华南'},
-                    
-                    // 添加更多项目      
-    ],
+      { title: '华南地区食谱',  iconName: 'Icon_cheese.png',area:'华南'},           
+      // ... 
+      ],
       activeTabSeason: 0,
       activeTabNumber: 0,
       showSelectArea:true,
@@ -370,10 +368,12 @@ export default {
   overflow-y: auto; /* 当内容溢出时显示滚动条 */
 }
 .every_meal{
-    display: flex; /* 设置为弹性容器 */
+  display: flex; /* 设置为弹性容器 */
   /* justify-content: space-between;  *//* 在弹性容器中，将项目以最大间距分布  */
  
   align-items: center; /* 在交叉轴上垂直居中 */
+  border-radius: 2px;
+  margin:0 30px 0 30px;
 }
 
  .vertical-line-zao{

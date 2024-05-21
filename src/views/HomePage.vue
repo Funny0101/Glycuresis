@@ -22,7 +22,7 @@
 
     <!-- 图表数据 -->
     <div class="graph">
-      <div class="title">每日数据</div>
+      <div class="title">每日数据&emsp;Daily Data</div>
       <div class="data_chart">
         <div class="echart" id="mychart" :style="myChartStyle"></div>
       </div>
@@ -91,7 +91,7 @@
 
 
     <!-- 功能网格 -->
-    <div class="grid">
+    <!-- <div class="grid">
       <div class="grid-item" @click="onDietRecordUpload">
         <div class="title">饮食记录上传</div>
         <div class="tips">
@@ -117,7 +117,48 @@
         <div class="info" v-if="glucoseValues.length === 0">未上传血糖数据</div>
         <div class="info" v-else>今日已上传</div>
       </div>
+    </div> -->
+    
+    <div class="func-grid">
+      <div class="item" @click="onDietRecordUpload">
+        <div class="title">饮食记录上传 Diet Record Upload</div>
+        <div class="tips">
+          <div class="img-container">
+            <img src="../assets/healthy.png" alt="Status Icon" v-if="isDietHealthy" />
+            <img src="../assets/alert.png" alt="Status Icon" v-else />
+          </div>
+          <div class="text-container">
+            <div class="data-info">
+              <div class="data">已摄入: {{ intake.calories }} cal</div>
+              <div class="info" v-if="mealRecord.breakfast === 0">早餐未上传</div>
+              <div class="info" v-else-if="mealRecord.lunch === 0">午餐未上传</div>
+              <div class="info" v-else-if="mealRecord.dinner === 0">晚餐未上传</div>
+              <div class="info" v-else>今日已上传</div>
+            </div>
+            <div class="tipText">{{ dietStatus }}</div> 
+          </div>
+        </div>
+      </div>
+      <div class="item" @click="onBloodSugarUpload">
+        <div class="title">血糖记录上传 Blood Sugar Upload</div>
+        <div class="tips">
+          <div class="img-container">
+            <img src="../assets/healthy.png" alt="Status Icon" v-if="isBloodSugarHealthy" />
+            <img src="../assets/alert.png" alt="Status Icon" v-else />
+          </div>
+          <div class="text-container">
+            <div class="data-info">
+              <div class="data" v-if="glucoseValues.length > 0">最大值: {{ glucoseValues.max }} mmol/L</div>
+              <div class="data" v-else>无</div>
+              <div class="info" v-if="glucoseValues.length === 0">未上传血糖数据</div>
+              <div class="info" v-else>今日已上传</div>
+            </div>
+            <div class="tipText">{{ bloodSugarStatus }}</div>
+          </div>
+        </div>
+      </div>
     </div>
+
 
     <!-- 血糖记录上传弹窗 -->
     <el-dialog title="血糖上传" v-model="glucoseFormVisible" center width=90% top=10vh>
@@ -742,6 +783,7 @@ export default {
 <style scoped>
 .home_container {
   font-size: medium;
+  padding: 0px;
 }
 
 .graph {
@@ -749,21 +791,24 @@ export default {
   height: 0;
   padding-bottom: 120%;
   position: relative;
-  margin: 20px auto;
+  margin: 10px auto;
   border-radius: 5%;
-  background-image: url('../assets/background.jpg');
-
+  background-image: url("../assets/background1.png");
   font-size: small;
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .graph>.title {
   position: absolute;
-  left: 4%;
-  top: 4%;
-
-  color: rgb(252, 250, 250);
+  left: 6%;
+  top: 3%;
+  font-size: large;
+  font-weight: 500;
+  font-style: oblique;
+  color: white;
   /* color: #26d39a; */
-  text-decoration: underline;
+  text-decoration: solid;
 }
 
 .graph>.data_chart {
@@ -776,6 +821,7 @@ export default {
 
   left: 5%;
   top: 10%;
+  box-shadow: 0 0 5px rgb(81, 79, 79);
 }
 
 .graph>.data_chart>#mychart {
@@ -791,7 +837,7 @@ export default {
   position: absolute;
   background-color: white;
   border-radius: 5%;
-
+  box-shadow: 0 0 5px rgb(81, 79, 79);
   left: 5%;
   top: 57%;
 }
@@ -928,7 +974,7 @@ export default {
   height: auto;
 }
 
-.tipText {
+.grid-item>.tips .tipText {
   color: #cb5757;
   font-size: medium;
   max-width: 80px;
@@ -947,7 +993,73 @@ export default {
   left: 10%;
 }
 
+.func-grid {
+  color: rgb(84, 138, 116);
+  padding: 5px 5px;
+  text-align: center;
+  border-radius: 10px;
+  margin: 0 20px;
+  background-image: url("../assets/background1.png");
+  background-size: cover;
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
 
+.func-grid>.item {
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgb(81, 79, 79);
+  height: 80px;
+  margin: 8px;
+  resize: vertical;
+  background-color: white;
+}
+
+.func-grid>.item .tips {
+  text-align: center; /* 文本居中 */
+  padding: 2px 5px;
+  display: flex;
+  justify-content:left;
+  width: 100%;
+}
+
+.func-grid > .item .tips .img-container {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.func-grid > .item .tips .text-container {
+  text-align: left;
+  font-size: medium;
+  font-family:'Times New Roman', Times, serif;
+}
+
+.func-grid > .item .tips .data-info {
+  display: flex; /* 启用 Flexbox 布局 */
+  width: 100%; /* 占满父容器的宽度 */
+  margin: 5px 0;
+}
+
+.func-grid > .item .tips .data {
+  margin-right: 8px;
+}
+
+.func-grid > .item .tips .tipText {
+  color: #cb5757;
+  margin-top: auto;
+}
+
+.func-grid>.item .tips img {
+  width:3em;
+  height:auto;
+}
+
+.func-grid>.item .title {
+  padding: 3px 5px;
+  color: black;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+}
 
 .icon-container {
   position: fixed;
