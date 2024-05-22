@@ -37,7 +37,6 @@
             </div>
         </van-popup>
 
-
         <!-- 开始时间选择器 -->
         <van-popup v-model:show="showStartDateTimePicker" round position="top">
             <van-datetime-picker type="datetime" title="请选择数据开始日期和时间" v-model="startDateTime" :min-date="minDate"
@@ -116,9 +115,9 @@ export default {
             bloodSugarChart: {},
             bloodSugarBarChart: {},
             pieChart: {},
-            bloodSugarChartStyle: { float: "left", width: "100%", height: "10rem" },
-            bloodSugarBarChartStyle: { float: "left", width: "100%", height: "5rem" },
-            pieChartStyle: { float: "left", width: "100%", height: "5rem", marginBottom: "3rem" },
+            bloodSugarChartStyle: { float: "left", width: "100%", height: "10rem",marginBottom: "12px" },
+            bloodSugarBarChartStyle: { float: "left", width: "100%", height: "4rem" },
+            pieChartStyle: { float: "left", width: "100%", height: "5rem", marginBottom: "2rem" },
             // 血糖阈值
             bloodSugarThreshold: 16.7,
             // 时间选择器
@@ -536,8 +535,8 @@ export default {
                     axisLabel: {
                         formatter: function (value) {
                             // value 是 x 轴的标签文本，即时间字符串
-                            // 如将 '2024-05-15 14:44:00' 截取为 '14:44:00'
-                            return value.replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
+                            // 如将 '2024-05-15 14:44:00' 截取为 '14:44'
+                            return value.replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1').slice(0,-3);
                         }
                     }
                 },
@@ -730,11 +729,17 @@ export default {
                 },
                 grid: {
                     left: '15%',
-                    right: '15%',
+                    right: '30%',
+                    top: '20%',
+                    bottom: '20%',
                 },
                 xAxis: {
                     type: 'value',
                     name: '血糖值(mmol/L)',
+                    nameLocation: 'end',
+                    nameTextStyle: {
+                        fontSize: 12
+                    },
                     axisLabel: {
                         formatter: '{value}'
                     }
@@ -922,4 +927,5 @@ export default {
 .details {
     flex-grow: 1;
 }
+
 </style>
