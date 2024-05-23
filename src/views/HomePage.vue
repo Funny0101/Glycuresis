@@ -796,7 +796,7 @@ export default {
   background-image: url("../assets/background1.png");
   font-size: small;
   box-shadow: 0 0 5px rgb(81, 79, 79);
-  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family:'楷体_GB2312', 'SimKai', 'STKaiti', 'Kaiti SC',Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .graph>.title {
@@ -1002,7 +1002,7 @@ export default {
   background-image: url("../assets/background1.png");
   background-size: cover;
   box-shadow: 0 0 5px rgb(81, 79, 79);
-  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family:'楷体_GB2312', 'SimKai', 'STKaiti', 'Kaiti SC',Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .func-grid>.item {
@@ -1030,7 +1030,6 @@ export default {
 .func-grid > .item .tips .text-container {
   text-align: left;
   font-size: 14px;
-  font-family:'Times New Roman', Times, serif;
 }
 
 .func-grid > .item .tips .data-info {

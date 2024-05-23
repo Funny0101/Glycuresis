@@ -448,7 +448,7 @@ export default {
   /* height:140px; */
   text-align:left center;
   font-size: 14px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'SimSun', '宋体','Times New Roman', Times, serif;
   background-color: white;
 }
 /**
