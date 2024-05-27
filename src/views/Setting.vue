@@ -165,12 +165,12 @@
 
         </van-dialog>
 
-        <!-- 绑定手机号 -->
+        <!-- 展示医生信息 -->
         <van-cell is-link>
           <template #title>
             <div class="optionBar">
-              <img src="@/assets/setting/phone.png" alt="phone">
-              <span>绑定手机号</span>
+              <img src="@/assets/setting/doctor.png" alt="doctor">
+              <span>医生信息</span>
             </div>
           </template>
         </van-cell>

@@ -286,6 +286,7 @@ export default {
     },
     async GetUserInformation() {
       try {
+        const userAccountRes = await get('/user/user/get');
         const response = await get('/user/user/getDetail')
           .then(response => {
             console.log('Data get successfully:', response.data);
@@ -298,6 +299,7 @@ export default {
               return;
             }
             this.userData = response.data;
+            this.userData.profile = userAccountRes.data.profile;
             // this.userData.name = response.data.name;
             // this.userData.account = response.data.account;
 

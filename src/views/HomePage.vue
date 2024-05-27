@@ -15,7 +15,10 @@
         </el-popconfirm>
       </van-col>
       <van-col span="2">
-        <van-icon name="chart-trending-o" size="30px" @click="showChart" />
+        <van-badge :content="1" color="#1989fa">
+          <van-icon name="envelop-o" size="30px" @click="console.log('收到消息')" />
+        </van-badge>
+        <!-- <van-icon name="chart-trending-o" size="30px" @click="showChart" /> -->
       </van-col>
     </van-row>
 
@@ -118,7 +121,7 @@
         <div class="info" v-else>今日已上传</div>
       </div>
     </div> -->
-    
+
     <div class="func-grid">
       <div class="item" @click="onDietRecordUpload">
         <div class="title">饮食记录上传 Diet Record Upload</div>
@@ -135,7 +138,7 @@
               <div class="info" v-else-if="mealRecord.dinner === 0">晚餐未上传</div>
               <div class="info" v-else>今日已上传</div>
             </div>
-            <div class="tipText">{{ dietStatus }}</div> 
+            <div class="tipText">{{ dietStatus }}</div>
           </div>
         </div>
       </div>
@@ -796,7 +799,7 @@ export default {
   background-image: url("../assets/background1.png");
   font-size: small;
   box-shadow: 0 0 5px rgb(81, 79, 79);
-  font-family:'楷体_GB2312', 'SimKai', 'STKaiti', 'Kaiti SC',Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: '楷体_GB2312', 'SimKai', 'STKaiti', 'Kaiti SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .graph>.title {
@@ -1002,7 +1005,7 @@ export default {
   background-image: url("../assets/background1.png");
   background-size: cover;
   box-shadow: 0 0 5px rgb(81, 79, 79);
-  font-family:'楷体_GB2312', 'SimKai', 'STKaiti', 'Kaiti SC',Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: '楷体_GB2312', 'SimKai', 'STKaiti', 'Kaiti SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .func-grid>.item {
@@ -1015,41 +1018,44 @@ export default {
 }
 
 .func-grid>.item .tips {
-  text-align: center; /* 文本居中 */
+  text-align: center;
+  /* 文本居中 */
   padding: 2px 5px;
   display: flex;
-  justify-content:left;
+  justify-content: left;
   width: 100%;
 }
 
-.func-grid > .item .tips .img-container {
+.func-grid>.item .tips .img-container {
   margin-left: 8px;
   margin-right: 8px;
 }
 
-.func-grid > .item .tips .text-container {
+.func-grid>.item .tips .text-container {
   text-align: left;
   font-size: 14px;
 }
 
-.func-grid > .item .tips .data-info {
-  display: flex; /* 启用 Flexbox 布局 */
-  width: 100%; /* 占满父容器的宽度 */
+.func-grid>.item .tips .data-info {
+  display: flex;
+  /* 启用 Flexbox 布局 */
+  width: 100%;
+  /* 占满父容器的宽度 */
   margin: 5px 0;
 }
 
-.func-grid > .item .tips .data {
+.func-grid>.item .tips .data {
   margin-right: 8px;
 }
 
-.func-grid > .item .tips .tipText {
+.func-grid>.item .tips .tipText {
   color: #cb5757;
   margin-top: auto;
 }
 
 .func-grid>.item .tips img {
-  width:3em;
-  height:auto;
+  width: 3em;
+  height: auto;
 }
 
 .func-grid>.item .title {
