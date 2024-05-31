@@ -9,7 +9,8 @@
                 <van-col :span="12" class="time-col">
                     <!-- 开始时间选择按钮 -->
                     <div class="time-label">开始时间</div>
-                    <van-button type="primary" icon="clock-o" class="time-button" @click="showStartDateTimePicker = true">
+                    <van-button type="primary" icon="clock-o" class="time-button"
+                        @click="showStartDateTimePicker = true">
                         {{ this.startDateTimeFormatted }}
                     </van-button>
                 </van-col>
@@ -49,7 +50,7 @@
 
     </div>
 </template>
-  
+
 <script>
 import * as echarts from "echarts";
 import { ref } from "vue";
@@ -140,8 +141,8 @@ export default {
                     { value: response.data.carbohydrateMass, name: '碳水' },
                     { value: response.data.celluloseMass, name: '纤维素' },
                 ]
-                for(let i = 0; i < this.nutrients.length; i++) {
-                    if(this.nutrients[i].value == 0) {
+                for (let i = 0; i < this.nutrients.length; i++) {
+                    if (this.nutrients[i].value == 0) {
                         this.nutrients.splice(i, 1);
                         i--;
                     }
@@ -167,10 +168,11 @@ export default {
             }
         },
         //把Date类型转化为定义的DTO类型
-        toDTO(date) {
+        toDTO(vdate) {
             //将时间格式从Mon Dec 18 2023 17:25:00 GMT+0800 (中国标准时间)，转换为2023-12-18T17:25:00格式
             const twoDigits = (num) => num.toString().padStart(2, '0');
 
+            const date = new Date(vdate);
             const year = date.getFullYear();
             const month = twoDigits(date.getMonth() + 1); // 月份是从 0 开始的
             const day = twoDigits(date.getDate());
@@ -181,9 +183,10 @@ export default {
             return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
         },
         // 格式化时间显示
-        formatTime(date) {
+        formatTime(vdate) {
             const twoDigits = (num) => num.toString().padStart(2, '0');
 
+            const date = new Date(vdate);
             const year = date.getFullYear();
             const month = twoDigits(date.getMonth() + 1); // 月份是从 0 开始的
             const day = twoDigits(date.getDate());
@@ -251,7 +254,11 @@ export default {
                 this.setGlobalSDT(value);
                 if (this.endDateTime - this.startDateTime > 172800000) {
                     console.log("不能超过两天")
-                    this.endDateTime = this.addNHours(48, this.startDateTime);
+                    // endDateTime = startDateTime + 48h
+                    let tmp = new Date(this.startDateTime);
+                    // 把tmp设置为startDateTime的48小时后
+                    tmp.setDate(tmp.getDate() + 2);
+                    this.endDateTime = tmp;
                     this.setGlobalEDT(this.endDateTime);
                 }
                 console.log(this.startDateTime)
@@ -274,7 +281,8 @@ export default {
                 this.setGlobalEDT(value);
                 if (this.endDateTime - this.startDateTime > 172800000) {
                     console.log("不能超过两天")
-                    this.startDateTime = this.subtractNHours(48, this.endDateTime);
+                    console.log(this.endDateTime)
+                    this.startDateTime = new Date(this.endDateTime).setDate(this.endDateTime.getDate() - 2);
                     this.setGlobalSDT(this.startDateTime);
                 }
                 this.showEndDateTimePicker = false;
@@ -408,4 +416,4 @@ export default {
 .details {
     flex-grow: 1;
 }
-</style>  
+</style>

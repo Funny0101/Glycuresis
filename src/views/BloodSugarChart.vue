@@ -372,10 +372,11 @@ export default {
             }
         },
         //时间格式转换函数
-        toDTO(date) {
+        toDTO(vdate) {
             //将时间格式从Mon Dec 18 2023 17:25:00 GMT+0800 (中国标准时间)，转换为2023-12-18T17:25:00格式
             const twoDigits = (num) => num.toString().padStart(2, '0');
 
+            const date = new Date(vdate);
             const year = date.getFullYear();
             const month = twoDigits(date.getMonth() + 1); // 月份是从 0 开始的
             const day = twoDigits(date.getDate());
@@ -449,9 +450,10 @@ export default {
             });
         },
         // 格式化时间显示
-        formatTime(date) {
+        formatTime(vdate) {
             const twoDigits = (num) => num.toString().padStart(2, '0');
 
+            const date = new Date(vdate);
             const year = date.getFullYear();
             const month = twoDigits(date.getMonth() + 1); // 月份是从 0 开始的
             const day = twoDigits(date.getDate());
