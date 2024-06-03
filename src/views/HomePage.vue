@@ -16,17 +16,20 @@
       </van-col>
       <van-col span="2">
         <van-badge :content="1" color="#1989fa">
-          <van-icon name="envelop-o" size="30px" @click="console.log('收到消息')" />
+          <van-icon name="envelop-o" size="30px" @click="()=>{this.$router.push('/message');}" />
         </van-badge>
-        <!-- <van-icon name="chart-trending-o" size="30px" @click="showChart" /> -->
       </van-col>
+      <!-- <van-col span="2">
+        <van-icon name="chart-trending-o" size="30px" @click="showChart" />
+      </van-col> -->
     </van-row>
 
 
     <!-- 图表数据 -->
     <div class="graph">
       <div class="title">每日数据&emsp;Daily Data</div>
-      <div class="data_chart">
+      <div class="data_chart" 
+        @click="()=>{this.$router.push('/friends');}">
         <div class="echart" id="mychart" :style="myChartStyle"></div>
       </div>
       <div class="realData">
@@ -261,6 +264,8 @@
 
       <!-- 导航项3 -->
       <van-tabbar-item icon="chart-trending-o" text="朋友" to="/friends" />
+
+      <!-- <van-tabbar-item icon="chat-o" text="消息" to="/message" /> -->
 
       <!-- 导航项4 -->
       <van-tabbar-item icon="setting" text="设置" to="/setting" />

@@ -1,6 +1,6 @@
 <template>
   <!-- 选择地区 -->
-  <div  v-if="showSelectArea" class="search">
+  <div v-if="showSelectArea" class="search">
     <div class="food-container">
       <van-nav-bar title="推荐食谱"
         left-arrow 
@@ -579,6 +579,10 @@ export default {
   text-align: left;
   font-weight: 400;
   font-size: large;
+}
+
+.choice-container >.choice-box .choice-block:hover {
+  cursor: pointer;
 }
 
 .choice-container >.choice-box .choice-block img {

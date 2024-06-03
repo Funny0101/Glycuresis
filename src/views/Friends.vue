@@ -1,6 +1,7 @@
 <template>
   <div class="health-data">
     <van-nav-bar title="记录统计" 
+      fixed placeholder
       left-arrow 
       @click-left="goBack()" 
       left-text="返回"

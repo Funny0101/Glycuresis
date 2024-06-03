@@ -185,7 +185,7 @@ export default {
             for (let i = 0; i < this.yData.length; i++) {
                 sum += this.yData[i];
             }
-            console.log(sum);
+            // console.log(sum);
             return sum / this.yData.length;
         },
         //每个区间的血糖值点数统计列表
@@ -248,7 +248,7 @@ export default {
                     }
                     this.xData = x;
                     this.yData = y;
-                    console.log('Data', this.xData, this.yData);
+                    // console.log('Data', this.xData, this.yData);
                     const isEdtCurrentTimeAndOneDayDifference = (sdt, edt) => {
                         // 忽略秒
                         const startTime = new Date(sdt).toISOString().slice(0,-8);
@@ -271,7 +271,7 @@ export default {
                                     this.xPredicted.push(ele.time);
                                     this.yPredicted.push(ele.value);
                                 });
-                                console.log('Predicted:', this.xPredicted, this.yPredicted);
+                                // console.log('Predicted:', this.xPredicted, this.yPredicted);
                             }
                             else {
                                 console.log('获取血糖预测结果失败');
@@ -360,10 +360,10 @@ export default {
                     endTime: edt,
                 });
                 const { code, msg, data, message } = response;
-                console.log(code);
-                console.log(msg);
-                console.log(data);
-                console.log(message);
+                // console.log(code);
+                // console.log(msg);
+                // console.log(data);
+                // console.log(message);
                 this.allRecords = data;
                 this.onLoad();
             }
@@ -410,8 +410,8 @@ export default {
             let edt = this.selectedPointTime.replace(' ', 'T');
             let sdt = this.subtractNHours(2, edt);
             sdt = this.toDTO(sdt);
-            console.log(sdt)
-            console.log(edt)
+            // console.log(sdt)
+            // console.log(edt)
             this.getDietData(sdt, edt);
             // //弹出弹窗，展示过去两小时的饮食记录
             this.showRiskyEventPopup();

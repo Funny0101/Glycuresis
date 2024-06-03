@@ -73,6 +73,13 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import( /* webpackChunkName: 'DietRecognition' */ "../views/FoodRecognition.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
    },
+   {
+    // 消息中心
+    path:"/message",
+    name:"message",
+    component: () => import( /* webpackChunkName: 'Message' */ "../views/Message.vue"),
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
+   }
 ] 
 
 
