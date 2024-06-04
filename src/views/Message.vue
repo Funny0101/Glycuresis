@@ -20,7 +20,8 @@
                     v-for="(notify, index) in notifyMessages" 
                     :key="notify.title" 
                     class="notify-item" 
-                    @click="showNotifyDetails">
+                    @click="showNotifyDetails(notify)"
+                    >
                     <!-- 只有当是第一条消息 或当前消息的日期与上一条消息不同的时候才显示时间 -->
                     <div v-if="index === 0 || (index > 0 && !isSameDay(notify.time, notifyMessages[index-1].time))" class="notify-time">
                         {{ formatDate(notify.time) }}
@@ -29,6 +30,7 @@
                         <div class="title">{{ notify.title }}</div>
                         <div class="preview">{{ notify.preview }}</div>
                         <div class="details-btn">查看详情</div>
+                        <van-icon name="arrow" class="notify-arrow"/>
                     </div>
                 </div>
             </div>
@@ -38,7 +40,12 @@
             <div class="chat-container">
                 <!-- 消息列表 -->
                 <div v-if="chatMessages.length === 0" class="empty-tip">没有通知消息</div>
-                <div v-else v-for="message in chatMessages" :key="message.from" class="message-item">
+                <div v-else 
+                    v-for="message in chatMessages" 
+                    :key="message.from" 
+                    class="message-item"
+                    @click="showChatDetails(message)"
+                    >
                     <div class="avatar-wrapper" v-if="message.unread > 0">
                         <img class="avatar" :src="getAvatarSrc(message.from)" alt="Avatar">
                         <!-- 未读消息数 -->
@@ -80,6 +87,10 @@ export default {
     },
 
     computed: {
+        // 计算属性，基于 msgUnread 更新 titleText
+        titleText() {
+            return this.msgUnread === 0 ? '消息中心' : `消息中心 (${this.msgUnread})`;
+        }
     },
 
     methods: {
@@ -160,12 +171,6 @@ export default {
 
 
             this.msgUnread = 3;
-            if (this.msgUnread == 0) {
-                this.titleText = '消息中心'
-            }
-            else {
-                this.titleText = `消息中心 (${this.msgUnread})`
-            }
         },
 
         // 格式化日期的方法，精确到日
@@ -192,7 +197,11 @@ export default {
         },
 
         showNotifyDetails(notify) {
+            console.log("notify detail", notify)
+        },
 
+        showChatDetails(chat) {
+            console.log("chat detail", chat)
         },
 
         // 检查两个日期是否在同一天
@@ -303,6 +312,9 @@ export default {
     height: 140px;
     display: flex;
     flex-direction: column;
+    position: relative;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .title {
@@ -330,6 +342,14 @@ export default {
     color: #999;
     padding: 20px;
     font-size: 14px;
+}
+
+.notify-arrow {
+    position: absolute; /* 绝对定位相对于.notify-content */
+    right: 10px; 
+    top: 82%; /* 箭头图标垂直居中 */
+    font-size: 16px; 
+    color: #898989; 
 }
 
 </style>
