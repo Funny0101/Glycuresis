@@ -547,8 +547,7 @@ export default {
 }
 
 /* newly added */
-.search {
-}
+
 
 .choice-container {
   display: flex;

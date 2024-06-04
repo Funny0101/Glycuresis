@@ -8,25 +8,55 @@
         style="--van-nav-bar-title-font-size: 18px;">
     </van-nav-bar>
 
-    <div class="msg-container">
-        <!-- 消息列表 -->
-        <div v-for="message in messages" :key="message.from" class="message-item">
-            <div class="avatar-wrapper" v-if="message.unread > 0">
-                <img class="avatar" :src="getAvatarSrc(message.from)" alt="Avatar">
-                <!-- 未读消息数 -->
-                <span class="unread-count">{{ message.unread }}</span>
+    <van-tabs 
+        sticky offset-top="40px"
+        swipeable animated
+        color="black" line-height="2px" line-width="60px" 
+        >
+        <van-tab title="通知" name="notify">
+            <div class="notify-container">
+                <div v-if="notifyMessages.length === 0" class="empty-tip">没有通知消息</div>
+                <div v-else 
+                    v-for="(notify, index) in notifyMessages" 
+                    :key="notify.title" 
+                    class="notify-item" 
+                    @click="showNotifyDetails">
+                    <!-- 只有当是第一条消息 或当前消息的日期与上一条消息不同的时候才显示时间 -->
+                    <div v-if="index === 0 || (index > 0 && !isSameDay(notify.time, notifyMessages[index-1].time))" class="notify-time">
+                        {{ formatDate(notify.time) }}
+                    </div>
+                    <div class="notify-content">
+                        <div class="title">{{ notify.title }}</div>
+                        <div class="preview">{{ notify.preview }}</div>
+                        <div class="details-btn">查看详情</div>
+                    </div>
+                </div>
             </div>
-            <div v-else class="avatar-wrapper">
-                <img class="avatar" :src="getAvatarSrc(message.from)" alt="Avatar">
-            </div>
-            <div class="message-content">
-                <div class="from">{{ message.from }}</div>
-                <div class="text">{{ message.text }}</div>
-            </div>
-            <div class="time">{{ formatDate(message.time) }}</div>
-        </div>
+        </van-tab>
 
-    </div>
+        <van-tab title="私信" name="chat">
+            <div class="chat-container">
+                <!-- 消息列表 -->
+                <div v-if="chatMessages.length === 0" class="empty-tip">没有通知消息</div>
+                <div v-else v-for="message in chatMessages" :key="message.from" class="message-item">
+                    <div class="avatar-wrapper" v-if="message.unread > 0">
+                        <img class="avatar" :src="getAvatarSrc(message.from)" alt="Avatar">
+                        <!-- 未读消息数 -->
+                        <span class="unread-count">{{ message.unread }}</span>
+                    </div>
+                    <div v-else class="avatar-wrapper">
+                        <img class="avatar" :src="getAvatarSrc(message.from)" alt="Avatar">
+                    </div>
+                    <div class="message-content">
+                        <div class="from">{{ message.from }}</div>
+                        <div class="text">{{ message.text }}</div>
+                    </div>
+                    <div class="time">{{ formatTime(message.time) }}</div>
+                </div>
+            </div>
+        </van-tab>
+
+      </van-tabs>
 
 </div>
 </template>
@@ -39,7 +69,9 @@ export default {
         return {
             titleText : '消息中心',
             msgUnread: 0,
-            messages: [],
+            chatMessages: [],
+            notifyMessages: [],
+
         }
     },
 
@@ -47,11 +79,14 @@ export default {
         this.getMessage();
     },
 
+    computed: {
+    },
+
     methods: {
 
         getMessage() {
-            this.msgUnread = 3;
-            this.messages = [
+            // 模拟向后端请求数据
+            this.chatMessages = [
                 {
                     from: 'Doctor101',
                     text: '记得吃💊',
@@ -78,6 +113,53 @@ export default {
                 },
             ]
 
+            this.notifyMessages = [
+                {
+                    time: new Date(),
+                    title: '血糖过低提醒',
+                    preview: '您的血糖过低，请及时补充糖分' ,
+                    unread: true,
+                    content: '您的血糖过低，请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                },
+                {
+                    time: new Date(),
+                    title: '血糖偏低提醒',
+                    preview: '您的血糖偏低，请及时补充糖分' ,
+                    unread: true,
+                    content: '您的血糖过低，请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                },
+                {
+                    time: new Date(2024, 5, 1),
+                    title: '儿童节快乐',
+                    preview: '糖小智祝您儿童节快乐！！！',
+                    unread: false,
+                    content: '糖小智祝您儿童节快乐！！！'
+                },
+                {
+                    time: new Date(2024, 0, 6),
+                    title: '5月份月度统计',
+                    preview: '本月您共摄入糖分114514mol，脂肪1919810mol，点击查看详情……',
+                    unread: false,
+                    content: '本月您共摄入糖分114514mol，脂肪1919810mol，非常的新鲜美味'
+                },
+                {
+                    time: new Date(2024, 0, 6),
+                    title: '血糖过低提醒',
+                    preview: '您的血糖过低，请及时补充糖分' ,
+                    unread: true,
+                    content: '您的血糖过低，请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                },
+                {
+                    time: new Date(2023, 2, 2),
+                    title: '欢迎使用糖小智',
+                    preview: '尊敬的患者，欢迎使用糖小智',
+                    unread: false,
+                    content: '尊敬的患者，欢迎使用糖小智，在这里您可以……'
+                }
+            ]
+
+
+            this.msgUnread = 3;
             if (this.msgUnread == 0) {
                 this.titleText = '消息中心'
             }
@@ -85,8 +167,15 @@ export default {
                 this.titleText = `消息中心 (${this.msgUnread})`
             }
         },
-        // 格式化日期的方法
+
+        // 格式化日期的方法，精确到日
         formatDate(date) {
+            const d = new Date(date);
+            return d.toLocaleDateString();
+        },
+
+        // 格式化日期的方法，精确到时间
+        formatTime(date) {
             const d = new Date(date);
             return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
         },
@@ -100,7 +189,19 @@ export default {
             } else {
                 return require('@/assets/blankuser.png');
             }
-        }
+        },
+
+        showNotifyDetails(notify) {
+
+        },
+
+        // 检查两个日期是否在同一天
+        isSameDay(date1, date2) {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+        },
+
     },
 
 }
@@ -109,7 +210,7 @@ export default {
 </script>
 
 <style scoped>
-.msg-container {
+.chat-container {
     padding: 10px;
 }
 
@@ -177,4 +278,58 @@ export default {
     color: #999;
     margin-left: auto;
 }
+
+.notify-container {
+    padding: 20px;
+}
+
+.notify-item {
+    margin-bottom: 10px;
+    /* border-bottom: 1px solid #eee; */
+    padding-bottom: 10px;
+}
+
+.notify-time {
+    font-size: 20px;
+    color: #999;
+    margin-bottom: 15px;
+}
+
+.notify-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 5px rgb(81, 79, 79);
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.preview {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.details-btn {
+    font-size: 14px;
+    color: #898989;
+    margin-top: auto; /* 推至底部 */
+    border-top: 1px solid #eee; /* 浅色分割线 */
+    padding-top: 10px; /* 确保分割线与内容有足够的空间 */
+}
+
+.empty-tip {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+    font-size: 14px;
+}
+
 </style>
