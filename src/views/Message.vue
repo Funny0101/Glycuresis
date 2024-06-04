@@ -90,25 +90,25 @@ export default {
                 {
                     from: 'Doctor101',
                     text: '记得吃💊',
-                    time: new Date(2024, 0, 4, 1),
+                    time: new Date(),
                     unread: 0,
                 },
                 {   
                     from: 'System',
-                    text: '您的血糖偏低，记得吃饭',
-                    time: new Date(),
+                    text: '欢迎使用聊天功能！',
+                    time: new Date(2023, 2, 2, 12),
                     unread: 1,
                 },
                 {
                     from: 'AprilFool',
                     text: 'I Luv U',
-                    time: new Date(2024, 0, 5, 1),
+                    time: new Date(2024, 3, 1),
                     unread: 22,
                 },
                 {
                     from: 'hacker',
                     text: 'Oops!',
-                    time: new Date(2022, 0, 3, 2),
+                    time: new Date(2023, 2, 2, 12),
                     unread: 0
                 },
             ]
@@ -174,10 +174,10 @@ export default {
             return d.toLocaleDateString();
         },
 
-        // 格式化日期的方法，精确到时间
+        // 格式化日期的方法，精确到分
         formatTime(date) {
             const d = new Date(date);
-            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+            return d.toLocaleDateString() + ' ' + d.toLocaleTimeString().slice(0, -3);
         },
 
         // 根据from字段的值获取头像图片路径
@@ -290,7 +290,7 @@ export default {
 }
 
 .notify-time {
-    font-size: 20px;
+    font-size: 18px;
     color: #999;
     margin-bottom: 15px;
 }
@@ -299,7 +299,7 @@ export default {
     background-color: #ffffff;
     border-radius: 8px;
     padding: 10px;
-    box-shadow: 0 0 5px rgb(81, 79, 79);
+    box-shadow: 0 0 2px rgb(81, 79, 79);
     height: 140px;
     display: flex;
     flex-direction: column;

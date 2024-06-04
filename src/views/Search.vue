@@ -411,7 +411,7 @@ export default {
   align-items: center; /* 在交叉轴上垂直居中 */
   border-radius: 10px;
   margin:5px 15px 5px 15px;
-  box-shadow: 0 0 5px rgb(81, 79, 79);
+  box-shadow: 0 0 3px rgb(81, 79, 79);
 }
 
 .vertical-line-zao{
@@ -437,7 +437,7 @@ export default {
   border-radius: 5px; /* 设置竖线的角为圆角 */
 }
 .card{
-  box-shadow: 0 0 5px rgb(81, 79, 79);
+  box-shadow: 0 0 3px rgb(81, 79, 79);
   border-radius: 10px; 
   padding: 10px 10px;
   margin-bottom: 10px;
@@ -570,7 +570,7 @@ export default {
   display: flex; /* 子元素也使用Flexbox布局 */
   align-items: center; /* 垂直居中对齐 */
   margin-bottom: 15px; 
-  box-shadow: 0 0 5px rgb(81, 79, 79);
+  box-shadow: 0 0 3px rgb(81, 79, 79);
   background-color: white;
   border-radius: 10px;
   padding: 0 10px;
@@ -608,7 +608,7 @@ export default {
 }
 
 .nutrient-block {
-  box-shadow: 0 0 5px rgb(81, 79, 79);
+  box-shadow: 0 0 3px rgb(81, 79, 79);
   margin-left: 15px;
   margin-right: 15px;
   border-radius: 5px;
