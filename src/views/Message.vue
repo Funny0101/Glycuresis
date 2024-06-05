@@ -11,7 +11,7 @@
     <van-tabs 
         sticky offset-top="40px"
         swipeable animated
-        color="black" line-height="2px" line-width="60px" 
+        color="green" line-height="2px" line-width="80px" 
         >
         <van-tab title="通知" name="notify">
             <div class="notify-container">
@@ -24,6 +24,7 @@
                     >
                     <!-- 只有当是第一条消息 或当前消息的日期与上一条消息不同的时候才显示时间 -->
                     <div v-if="index === 0 || (index > 0 && !isSameDay(notify.time, notifyMessages[index-1].time))" class="notify-time">
+                        <span class="green-circle"></span>
                         {{ formatDate(notify.time) }}
                     </div>
                     <div class="notify-content">
@@ -302,6 +303,8 @@ export default {
     font-size: 18px;
     color: #999;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .notify-content {
@@ -315,6 +318,22 @@ export default {
     position: relative;
     margin-left: 10px;
     margin-right: 10px;
+    /* 确保 notify-content 有相对定位，以便伪元素可以绝对定位到它 */
+}
+
+.notify-content::after {
+    content: '';
+    position: absolute;
+    bottom: -2;
+    right: -2;
+    width: 100%; /* 伪元素宽度 */
+    height: 100%; /* 伪元素高度 */
+    background-image: linear-gradient(to bottom right,
+                                      #e8f5e9, /* 浅绿 */
+                                      #c8e6c9, /* 中绿 */
+                                      #00796b); /* 深绿 */
+    z-index: -1; /* 确保伪元素在 notify-content 后面 */
+    border-radius: 8px; /* 与 notify-content 的圆角保持一致 */
 }
 
 .title {
@@ -350,6 +369,20 @@ export default {
     top: 82%; /* 箭头图标垂直居中 */
     font-size: 16px; 
     color: #898989; 
+}
+
+.green-circle {
+    display: inline-block;
+    width: 12px; /* 圆环大小 */
+    height: 12px;
+    background-color: #fff; /* 圆环背景色 */
+    border: 3px solid #4CAF50; /* 圆环边框颜色 */
+    border-radius: 50%; 
+    margin-right: 8px; /* 与时间文本的间隔 */
+    text-align: center;
+    font-weight: bold;
+    vertical-align: middle;
+    color: #4CAF50; /* 圆环内字符的颜色 */
 }
 
 </style>
