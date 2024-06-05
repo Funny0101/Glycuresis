@@ -2,84 +2,90 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Cookies from 'js-cookie'
 
 const routes: Array<RouteRecordRaw> = [
-   {
-      path:"",
-      redirect: "/home"
-   },
-   {
+  {
+    path:"",
+    redirect: "/home"
+  },
+  {
     path:"/guide",
     name:"guide",
     component: () => import( /* webpackChunkName: 'Guide' */ "../views/Guide.vue"),
- },
-   {
-      path:"/login",
-      name:"login",
-      component: () => import( /* webpackChunkName: 'Login' */ "../views/LogIn.vue"),
-   },
-   {
+  },
+  {
+    path:"/login",
+    name:"login",
+    component: () => import( /* webpackChunkName: 'Login' */ "../views/LogIn.vue"),
+  },
+  {
     //任意匹配
     path:"/:pathMatch(.*)",
     name:"notfound",
     component: () => import( /* webpackChunkName: 'NotFound' */ "../views/NotFound.vue"),
-   },
-   {
+  },
+  {
     path:"/information",
     name:"information",
     component: () => import( /* webpackChunkName: 'Information' */ "../views/Information.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
- },
-   {
-      path:"/home",
-      name:"home",
-      component: () => import( /* webpackChunkName: 'Home' */ "../views/HomePage.vue"),
-      meta: { requiresAuth: true }, // 这个路由需要登录权限
-   },
-   {
-      path:"/setting",
-      name:"setting",
-      component: () => import( /* webpackChunkName: 'Setting' */ "../views/Setting.vue"),
-      meta: { requiresAuth: true }, // 这个路由需要登录权限
-   },
-   {
-      path:"/search",
-      name:"search",
-      component: () => import( /* webpackChunkName: 'Search' */ "../views/Search.vue"),
-      meta: { requiresAuth: true }, // 这个路由需要登录权限
-   },
-   {
+  },
+  {
+    path:"/home",
+    name:"home",
+    component: () => import( /* webpackChunkName: 'Home' */ "../views/HomePage.vue"),
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
+  },
+  {
+    path:"/setting",
+    name:"setting",
+    component: () => import( /* webpackChunkName: 'Setting' */ "../views/Setting.vue"),
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
+  },
+  {
+    path:"/search",
+    name:"search",
+    component: () => import( /* webpackChunkName: 'Search' */ "../views/Search.vue"),
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
+  },
+  {
     path:"/friends",
     name:"friends",
     component: () => import( /* webpackChunkName: 'Friends' */ "../views/Friends.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
-   },
-   {
+  },
+  {
     path:"/oneMeal/:id/:type/:time",
     name:"oneMeal",
     component: () => import( /* webpackChunkName: 'OneMeal' */ "../views/OneMeal.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
     props: true, // 允许传参
-   },
-   {
+  },
+  {
     path:"/dietRecord/:meal",
     name:"dietRecord",
     component: () => import( /* webpackChunkName: 'DietRecord' */ "../views/DietRecord.vue"),
     props: true,
     meta: { requiresAuth: true }, // 这个路由需要登录权限
-   },
-   {
+  },
+  {
     //饮食图片识别页面
     path:"/foodRecognition",
     name:"foodRecognition",
     component: () => import( /* webpackChunkName: 'DietRecognition' */ "../views/FoodRecognition.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
-   },
-   {
+  },
+  {
     // 消息中心
     path:"/message",
     name:"message",
     component: () => import( /* webpackChunkName: 'Message' */ "../views/Message.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
-   }
+  },
+  {
+    path: '/chat-detail/:chatId',
+    name: 'ChatDetail',
+    component: () => import( /* webpackChunkName: 'ChatDetail' */ "../views/ChatDetail.vue"),
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
+  },
 ] 
 
 

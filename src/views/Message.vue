@@ -8,6 +8,8 @@
         style="--van-nav-bar-title-font-size: 18px;">
     </van-nav-bar>
 
+    <van-dialog />
+
     <van-tabs 
         sticky offset-top="40px"
         swipeable animated
@@ -70,8 +72,12 @@
 </template>
 
 <script>
+import { Dialog } from 'vant';
 
 export default {
+    components: {
+        [Dialog.Component.name]: Dialog.Component,
+    },
 
     data() {
         return {
@@ -88,7 +94,7 @@ export default {
     },
 
     computed: {
-        // 计算属性，基于 msgUnread 更新 titleText
+        // 计算属性, 基于 msgUnread 更新 titleText
         titleText() {
             return this.msgUnread === 0 ? '消息中心' : `消息中心 (${this.msgUnread})`;
         }
@@ -129,16 +135,16 @@ export default {
                 {
                     time: new Date(),
                     title: '血糖过低提醒',
-                    preview: '您的血糖过低，请及时补充糖分' ,
+                    preview: '您的血糖过低, 请及时补充糖分' ,
                     unread: true,
-                    content: '您的血糖过低，请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
                 },
                 {
                     time: new Date(),
                     title: '血糖偏低提醒',
-                    preview: '您的血糖偏低，请及时补充糖分' ,
+                    preview: '您的血糖偏低, 请及时补充糖分' ,
                     unread: true,
-                    content: '您的血糖过低，请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
                 },
                 {
                     time: new Date(2024, 5, 1),
@@ -150,23 +156,23 @@ export default {
                 {
                     time: new Date(2024, 0, 6),
                     title: '5月份月度统计',
-                    preview: '本月您共摄入糖分114514mol，脂肪1919810mol，点击查看详情……',
+                    preview: '本月您共摄入糖分114514mol, 脂肪1919810mol, 点击查看详情……',
                     unread: false,
-                    content: '本月您共摄入糖分114514mol，脂肪1919810mol，非常的新鲜美味'
+                    content: '本月您共摄入糖分114514mol, 脂肪1919810mol, 非常的新鲜美味'
                 },
                 {
                     time: new Date(2024, 0, 6),
                     title: '血糖过低提醒',
-                    preview: '您的血糖过低，请及时补充糖分' ,
+                    preview: '您的血糖过低, 请及时补充糖分' ,
                     unread: true,
-                    content: '您的血糖过低，请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
                 },
                 {
                     time: new Date(2023, 2, 2),
                     title: '欢迎使用糖小智',
-                    preview: '尊敬的患者，欢迎使用糖小智',
+                    preview: '尊敬的患者, 欢迎使用糖小智',
                     unread: false,
-                    content: '尊敬的患者，欢迎使用糖小智，在这里您可以……'
+                    content: '尊敬的患者, 欢迎使用糖小智, 在这里您可以……'
                 }
             ]
 
@@ -174,13 +180,13 @@ export default {
             this.msgUnread = 3;
         },
 
-        // 格式化日期的方法，精确到日
+        // 格式化日期的方法, 精确到日
         formatDate(date) {
             const d = new Date(date);
             return d.toLocaleDateString();
         },
 
-        // 格式化日期的方法，精确到分
+        // 格式化日期的方法, 精确到分
         formatTime(date) {
             const d = new Date(date);
             return d.toLocaleDateString() + ' ' + d.toLocaleTimeString().slice(0, -3);
@@ -199,10 +205,23 @@ export default {
 
         showNotifyDetails(notify) {
             console.log("notify detail", notify)
+            Dialog.alert({
+                title: notify.title,
+                message: notify.content,
+                confirmButtonColor: '#00796b',
+                theme: 'round-button',
+                messageAlign: 'left',
+            }).then(() => {
+                // on close
+            });
         },
 
         showChatDetails(chat) {
             console.log("chat detail", chat)
+            // this.$router.push({ 
+            //     name: 'ChatDetail', 
+            //     params: { chatId: null } 
+            // });
         },
 
         // 检查两个日期是否在同一天
@@ -318,7 +337,7 @@ export default {
     position: relative;
     margin-left: 10px;
     margin-right: 10px;
-    /* 确保 notify-content 有相对定位，以便伪元素可以绝对定位到它 */
+    /* 确保 notify-content 有相对定位, 以便伪元素可以绝对定位到它 */
 }
 
 .notify-content::after {
