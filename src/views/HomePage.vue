@@ -277,7 +277,9 @@
 <script>
 import * as echarts from "echarts";
 import axios from "axios";
-import { dealTime } from "../global"
+import { dealTime } from "../global";
+import Cookies from 'js-cookie';
+
 export default {
   data() {
     return {
@@ -345,6 +347,13 @@ export default {
 
       // 血糖值
       glucoseValues: [],
+
+      // websocket
+      wspath: 'ws://212.64.29.100:8023/websocket/ws/',
+
+      // satoken
+      satoken: Cookies.get('satoken'),
+
     };
   },
   mounted() {
@@ -362,6 +371,7 @@ export default {
 
     // console.log('Version 1.0');
 
+    this.getWsMessage();
   },
   // 计算属性
   computed: {
@@ -783,6 +793,43 @@ export default {
       // window.addEventListener("resize", () => {
       //   this.myChart.resize();
       // });
+    },
+
+    getWsMessage() {
+      const ws_msg = new WebSocket(this.wspath + 'message/' + this.satoken);
+      const ws_chat = new WebSocket(this.wspath + 'chat/' + this.satoken);
+
+      //连接成功建立的回调方法
+      ws_msg.onopen = function(){
+        console.log("WebSocket for message连接成功");
+      }
+      
+
+      //接收到消息的回调方法
+      ws_msg.onmessage = function(event){
+        console.log(event.data);//event.data中是另一端发送过来的内容
+      }
+
+      //连接发生错误的回调方法
+      ws_msg.onerror = function(){
+        console.log("WebSocket for message error");
+      };
+
+      //连接成功建立的回调方法
+      ws_chat.onopen = function(){
+        console.log("WebSocket for chat连接成功");
+      }
+
+      //接收到消息的回调方法
+      ws_chat.onmessage = function(event){
+        console.log(event.data);//event.data中是另一端发送过来的内容
+      }
+
+      //连接发生错误的回调方法
+      ws_chat.onerror = function(){
+        console.log("WebSocket for chat error");
+      };
+
     }
   },
 };

@@ -30,6 +30,7 @@
                         {{ formatDate(notify.time) }}
                     </div>
                     <div class="notify-content">
+                        <span v-if="notify.unread" class="unread-badge">未读</span>
                         <div class="title">{{ notify.title }}</div>
                         <div class="preview">{{ notify.preview }}</div>
                         <div class="details-btn">查看详情</div>
@@ -73,6 +74,7 @@
 
 <script>
 import { Dialog } from 'vant';
+import axios from "axios";
 
 export default {
     components: {
@@ -81,8 +83,8 @@ export default {
 
     data() {
         return {
-            titleText : '消息中心',
-            msgUnread: 0,
+            notifyUnread: 0,
+            chatUnread: 0,
             chatMessages: [],
             notifyMessages: [],
 
@@ -94,15 +96,68 @@ export default {
     },
 
     computed: {
-        // 计算属性, 基于 msgUnread 更新 titleText
+        // 计算属性, 基于 未读消息数量 更新 titleText
         titleText() {
-            return this.msgUnread === 0 ? '消息中心' : `消息中心 (${this.msgUnread})`;
+            return this.notifyUnread + this.chatUnread === 0 ? '消息中心' : `消息中心 (${this.notifyUnread + this.chatUnread})`;
         }
     },
 
     methods: {
 
         getMessage() {
+
+            // 未读通知数量
+            axios.get('/api/messagechat/common/getUnreadNum')
+                .then(res => {
+                    this.notifyUnread = res.data.data;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
+
+            const query = {
+                pageno: 2, 
+                pagesize: 3,
+            };
+
+            axios.get('/api/messagechat/common/getHistory', {params: query})
+                .then(res => {
+                    console.log(res.data.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
+
+            // 未读聊天数量
+            // axios.post('/api/messagechat/chat/getUnreadNum', {othersideId: 1})
+            //     .then(res => {
+            //         this.chatUnread = res.data.data;
+            //     })
+            //     .catch(err => {
+            //         console.log(err);
+            //     });
+
+
+            // 最新chat
+            // axios.get('/api/messagechat/chat/getLatest', {othersideId: 1})
+            //     .then(res => {
+            //         console.log(res.data.data);
+            //     })
+            //     .catch(err => {
+            //         console.log(err);
+            //     });
+            
+
+
+
+            this.simulateMessageData();
+
+
+        },
+
+        simulateMessageData() {
             // 模拟向后端请求数据
             this.chatMessages = [
                 {
@@ -111,24 +166,24 @@ export default {
                     time: new Date(),
                     unread: 0,
                 },
-                {   
-                    from: 'System',
-                    text: '欢迎使用聊天功能！',
-                    time: new Date(2023, 2, 2, 12),
-                    unread: 1,
-                },
-                {
-                    from: 'AprilFool',
-                    text: 'I Luv U',
-                    time: new Date(2024, 3, 1),
-                    unread: 22,
-                },
-                {
-                    from: 'hacker',
-                    text: 'Oops!',
-                    time: new Date(2023, 2, 2, 12),
-                    unread: 0
-                },
+                // {   
+                //     from: 'System',
+                //     text: '欢迎使用聊天功能！',
+                //     time: new Date(2023, 2, 2, 12),
+                //     unread: 1,
+                // },
+                // {
+                //     from: 'AprilFool',
+                //     text: 'I Luv U',
+                //     time: new Date(2024, 3, 1),
+                //     unread: 22,
+                // },
+                // {
+                //     from: 'hacker',
+                //     text: 'Oops!',
+                //     time: new Date(2023, 2, 2, 12),
+                //     unread: 0
+                // },
             ]
 
             this.notifyMessages = [
@@ -175,9 +230,6 @@ export default {
                     content: '尊敬的患者, 欢迎使用糖小智, 在这里您可以……'
                 }
             ]
-
-
-            this.msgUnread = 3;
         },
 
         // 格式化日期的方法, 精确到日
@@ -218,10 +270,10 @@ export default {
 
         showChatDetails(chat) {
             console.log("chat detail", chat)
-            // this.$router.push({ 
-            //     name: 'ChatDetail', 
-            //     params: { chatId: null } 
-            // });
+            this.$router.push({ 
+                name: 'ChatDetail', 
+                params: { otherSideId: 1 } 
+            });
         },
 
         // 检查两个日期是否在同一天
@@ -402,6 +454,17 @@ export default {
     font-weight: bold;
     vertical-align: middle;
     color: #4CAF50; /* 圆环内字符的颜色 */
+}
+
+.unread-badge {
+    position: absolute;
+    top: 10px; 
+    right: 15px; 
+    background-color: rgb(14, 165, 62);
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 10px;
 }
 
 </style>

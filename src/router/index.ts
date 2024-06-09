@@ -81,7 +81,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }, // 这个路由需要登录权限
   },
   {
-    path: '/chat-detail/:chatId',
+    path: '/chat-detail/:otherSideId',
     name: 'ChatDetail',
     component: () => import( /* webpackChunkName: 'ChatDetail' */ "../views/ChatDetail.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
