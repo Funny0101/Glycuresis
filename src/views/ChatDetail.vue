@@ -1,6 +1,11 @@
 <template>
     <div class="chat-container">
-        <van-nav-bar title="医生" fixed placeholder left-arrow left-text="返回" @click-left="goBack" />
+        <van-nav-bar title="医生" 
+            fixed placeholder 
+            left-arrow left-text="返回" 
+            @click-left="goBack" 
+            style="--van-nav-bar-title-font-size: 18px;" 
+        />
         <!-- 聊天内容区域 -->
         <div class="chat-content" ref="messageList">
             <!-- 消息列表 -->
@@ -96,7 +101,7 @@
             },
             scrollToBottom() {
                 const messageList = this.$refs.messageList;
-                messageList.scrollTop = messageList.scrollHeight+100;; 
+                messageList.scrollTop = messageList.scrollHeight;; 
             }
         }
     };

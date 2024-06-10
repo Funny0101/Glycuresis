@@ -15,7 +15,7 @@
         swipeable animated
         color="green" line-height="2px" line-width="80px" 
         >
-        <van-tab title="通知" name="notify">
+        <van-tab :title="notifyTitltText" name="notify">
             <div class="notify-container">
                 <div v-if="notifyMessages.length === 0" class="empty-tip">没有通知消息</div>
                 <div v-else 
@@ -40,7 +40,7 @@
             </div>
         </van-tab>
 
-        <van-tab title="私信" name="chat">
+        <van-tab :title="chatTitleText" name="chat">
             <div class="chat-container">
                 <!-- 消息列表 -->
                 <div v-if="chatMessages.length === 0" class="empty-tip">没有通知消息</div>
@@ -75,6 +75,7 @@
 <script>
 import { Dialog } from 'vant';
 import axios from "axios";
+import { get, put, post, del } from "../axios/axiosConfig.js";
 
 export default {
     components: {
@@ -87,27 +88,75 @@ export default {
             chatUnread: 0,
             chatMessages: [],
             notifyMessages: [],
-
+            doctorId: null,
         }
     },
 
     mounted() {
+        // this.getDoctor();
         this.getMessage();
+
     },
 
     computed: {
         // 计算属性, 基于 未读消息数量 更新 titleText
         titleText() {
             return this.notifyUnread + this.chatUnread === 0 ? '消息中心' : `消息中心 (${this.notifyUnread + this.chatUnread})`;
+        },
+        notifyTitltText() {
+            return this.notifyUnread === 0 ? '通知' : `通知 (${this.notifyUnread})`;
+        },
+        chatTitleText() {
+            return this.chatUnread === 0 ? '私信' : `私信 (${this.chatUnread})`;
         }
     },
 
     methods: {
 
-        getMessage() {
+        async getMessage() {
+            
+            // 获取医生ID
+            try{
+                const res = await get('/user/user/get');
+                if (res.code == 200) {
+                    this.doctorId = res.data.doctor;
+                }
+            } 
+            catch(err) {
+                console.log('获取医生信息失败', err)
+            }
+
+            // 获取与医生的最新聊天
+            axios.get(`/api/messagechat/chat/getLatest/${this.doctorId}`)
+                .then(res => {
+                    // 最新的一条
+                    let last = res.data.data[res.data.data.length - 1];
+                    console.log('latest chat', last);
+                    this.chatMessages = [{
+                        from: '医生',
+                        text: last.message,
+                        time: new Date(last.time),
+                        unread: 0, 
+                    }]
+
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
+
+            // 未读聊天数量
+            axios.post('/api/messagechat/chat/getUnreadNum', { otherSideId: this.doctorId })
+                .then(res => {
+                    console.log(res)
+                    this.chatUnread = res.data.data;
+                })
+                .catch(err => {
+                    console.log(err);
+                });
 
             // 未读通知数量
-            axios.get('/api/messagechat/common/getUnreadNum')
+            axios.get('/api/messagechat/message/getUnreadNum')
                 .then(res => {
                     this.notifyUnread = res.data.data;
                 })
@@ -117,48 +166,126 @@ export default {
 
 
             const query = {
-                pageno: 2, 
-                pagesize: 3,
+                pageNo: 0, 
+                pageSize: 5,
             };
 
-            axios.get('/api/messagechat/common/getHistory', {params: query})
+            axios.get('/api/messagechat/message/getHistory', {params: query})
                 .then(res => {
-                    console.log(res.data.data);
+                    console.log('message his', res.data.data);
+                    this.pushNotify(res.data.data.list);
                 })
                 .catch(err => {
                     console.log(err);
                 });
-
-
-            // 未读聊天数量
-            // axios.post('/api/messagechat/chat/getUnreadNum', {othersideId: 1})
-            //     .then(res => {
-            //         this.chatUnread = res.data.data;
-            //     })
-            //     .catch(err => {
-            //         console.log(err);
-            //     });
-
-
-            // 最新chat
-            // axios.get('/api/messagechat/chat/getLatest', {othersideId: 1})
-            //     .then(res => {
-            //         console.log(res.data.data);
-            //     })
-            //     .catch(err => {
-            //         console.log(err);
-            //     });
             
 
 
+            
 
-            this.simulateMessageData();
+            // this.simulateNotifyData();
 
 
         },
 
-        simulateMessageData() {
-            // 模拟向后端请求数据
+        pushNotify(data) {
+            data.forEach(ele => {
+                let item = {
+                    id: ele.id,
+                    fromId: ele.fromUserId,
+                    fromName: ele.fronUserName,
+                    time: new Date(ele.time),
+                    title: this.getNotifyTitle(ele.message),
+                    preview: this.getNotifyPreview(ele.message),
+                    unread: !ele.confirmed,
+                    content: ele.message
+                }
+                this.notifyMessages.push(item);
+            });
+            console.log(this.notifyMessages)
+        },
+
+        getNotifyTitle(message) {
+            return '通知';
+        },
+
+        getNotifyPreview(message) {
+            if (message.length <= 45) {
+                return message;
+            } 
+            else {
+                return message.substring(0, 45);
+            }
+        },
+
+        // 模拟向后端请求数据
+        simulateNotifyData() {
+            this.notifyMessages = [
+                {
+                    id: 1,
+                    fromId: 1,
+                    fromName: 'Admin',
+                    time: new Date(),
+                    title: '血糖过低提醒',
+                    preview: '您的血糖过低, 请及时补充糖分' ,
+                    unread: true,
+                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                },
+                {
+                    id: 2,
+                    fromId: 1,
+                    fromName: 'Admin',
+                    time: new Date(),
+                    title: '血糖偏低提醒',
+                    preview: '您的血糖偏低, 请及时补充糖分' ,
+                    unread: true,
+                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                },
+                {
+                    id: 3,
+                    fromId: 1,
+                    fromName: 'Admin',
+                    time: new Date(2024, 5, 1),
+                    title: '儿童节快乐',
+                    preview: '糖小智祝您儿童节快乐！！！',
+                    unread: false,
+                    content: '糖小智祝您儿童节快乐！！！'
+                },
+                {
+                    id: 4,
+                    fromId: 1,
+                    fromName: 'Admin',
+                    time: new Date(2024, 0, 6),
+                    title: '5月份月度统计',
+                    preview: '本月您共摄入糖分114514mol, 脂肪1919810mol, 点击查看详情……',
+                    unread: false,
+                    content: '本月您共摄入糖分114514mol, 脂肪1919810mol, 非常的新鲜美味'
+                },
+                {
+                    id: 5,
+                    fromId: 1,
+                    fromName: 'Admin',
+                    time: new Date(2024, 0, 6),
+                    title: '血糖过低提醒',
+                    preview: '您的血糖过低, 请及时补充糖分' ,
+                    unread: true,
+                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
+                },
+                {
+                    id: 6,
+                    fromId: 1,
+                    fromName: 'Admin',
+                    time: new Date(2023, 2, 2),
+                    title: '欢迎使用糖小智',
+                    preview: '尊敬的患者, 欢迎使用糖小智',
+                    unread: false,
+                    content: '尊敬的患者, 欢迎使用糖小智, 在这里您可以……'
+                }
+            ]
+        },
+
+        // 模拟向后端请求数据
+        simulateChatData() {
             this.chatMessages = [
                 {
                     from: 'Doctor101',
@@ -185,51 +312,6 @@ export default {
                 //     unread: 0
                 // },
             ]
-
-            this.notifyMessages = [
-                {
-                    time: new Date(),
-                    title: '血糖过低提醒',
-                    preview: '您的血糖过低, 请及时补充糖分' ,
-                    unread: true,
-                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
-                },
-                {
-                    time: new Date(),
-                    title: '血糖偏低提醒',
-                    preview: '您的血糖偏低, 请及时补充糖分' ,
-                    unread: true,
-                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
-                },
-                {
-                    time: new Date(2024, 5, 1),
-                    title: '儿童节快乐',
-                    preview: '糖小智祝您儿童节快乐！！！',
-                    unread: false,
-                    content: '糖小智祝您儿童节快乐！！！'
-                },
-                {
-                    time: new Date(2024, 0, 6),
-                    title: '5月份月度统计',
-                    preview: '本月您共摄入糖分114514mol, 脂肪1919810mol, 点击查看详情……',
-                    unread: false,
-                    content: '本月您共摄入糖分114514mol, 脂肪1919810mol, 非常的新鲜美味'
-                },
-                {
-                    time: new Date(2024, 0, 6),
-                    title: '血糖过低提醒',
-                    preview: '您的血糖过低, 请及时补充糖分' ,
-                    unread: true,
-                    content: '您的血糖过低, 请及时补充zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd'
-                },
-                {
-                    time: new Date(2023, 2, 2),
-                    title: '欢迎使用糖小智',
-                    preview: '尊敬的患者, 欢迎使用糖小智',
-                    unread: false,
-                    content: '尊敬的患者, 欢迎使用糖小智, 在这里您可以……'
-                }
-            ]
         },
 
         // 格式化日期的方法, 精确到日
@@ -244,11 +326,16 @@ export default {
             return d.toLocaleDateString() + ' ' + d.toLocaleTimeString().slice(0, -3);
         },
 
+        // 将"yyyy-mm-dd hh:mm:ss"的String转换为Date
+        formTimeFromStr(string) {
+
+        },
+
         // 根据from字段的值获取头像图片路径
         getAvatarSrc(from) {
             if (from === 'System') {
                 return require('@/assets/bell.png');
-            } else if (from.startsWith('Doctor')) {
+            } else if (from.startsWith('Doctor') || from.startsWith('医生')) {
                 return require('@/assets/setting/doctor.png');
             } else {
                 return require('@/assets/blankuser.png');
@@ -265,6 +352,18 @@ export default {
                 messageAlign: 'left',
             }).then(() => {
                 // on close
+                const idList = [notify.id];
+                axios.post('/api/messagechat/message/confirm', idList)
+                    .then(res => {
+                        console.log('confirm:', res.data);
+                        const msg = this.notifyMessages.find(item => item.id === notify.id);
+                        if (msg) {
+                            msg.unread = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('confirm error:', error);
+                    });
             });
         },
 
