@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { Dialog } from 'vant';
+import { Dialog, Toast } from 'vant';
 import axios from "axios";
 import { get, put, post, del } from "../axios/axiosConfig.js";
 
@@ -86,9 +86,16 @@ export default {
         return {
             notifyUnread: 0,
             chatUnread: 0,
+
             chatMessages: [],
             notifyMessages: [],
+
             doctorId: null,
+            
+            currentNotifyPage: 2,
+            pageSize: 5,
+            totalNotifyPages: 5,
+            isLoadingMore: false, // 控制是否正在加载更多数据
         }
     },
 
@@ -96,6 +103,14 @@ export default {
         // this.getDoctor();
         this.getMessage();
 
+        // 添加滚动事件监听器
+        window.addEventListener('scroll', this.handleNotifyScroll);
+
+    },
+
+    beforeDestroy() {
+        // 移除滚动事件监听器
+        window.removeEventListener('scroll', this.handleNotifyScroll);
     },
 
     computed: {
@@ -165,27 +180,30 @@ export default {
                 });
 
 
+            this.getNotifyMessage(1);
+            
+            
+
+            // this.simulateNotifyData();
+
+
+        },
+
+        getNotifyMessage(pageNo, pageSize=this.pageSize) {
             const query = {
-                pageNo: 0, 
-                pageSize: 5,
+                pageNo: pageNo, 
+                pageSize: pageSize,
             };
 
             axios.get('/api/messagechat/message/getHistory', {params: query})
                 .then(res => {
                     console.log('message his', res.data.data);
                     this.pushNotify(res.data.data.list);
+                    this.totalNotifyPages = res.data.data.pages;
                 })
                 .catch(err => {
                     console.log(err);
                 });
-            
-
-
-            
-
-            // this.simulateNotifyData();
-
-
         },
 
         pushNotify(data) {
@@ -202,7 +220,7 @@ export default {
                 }
                 this.notifyMessages.push(item);
             });
-            console.log(this.notifyMessages)
+            // console.log(this.notifyMessages)
         },
 
         getNotifyTitle(message) {
@@ -343,7 +361,7 @@ export default {
         },
 
         showNotifyDetails(notify) {
-            console.log("notify detail", notify)
+            // console.log("notify detail", notify)
             Dialog.alert({
                 title: notify.title,
                 message: notify.content,
@@ -380,6 +398,31 @@ export default {
             const d1 = new Date(date1);
             const d2 = new Date(date2);
             return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+        },
+
+        handleNotifyScroll() {
+            // 如果已经在加载更多数据，则直接返回，防止在快速滚动时多次触发
+            if (this.isLoadingMore) return;
+
+            let scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            let clientHeight = document.documentElement.clientHeight;
+            let scrollHeight = document.documentElement.scrollHeight;
+            let bottomOfWindow = scrollTop + clientHeight >= scrollHeight-4
+
+            // 检查是否滚动到底部
+            if (scrollTop != 0 && bottomOfWindow) {
+                this.isLoadingMore = true;
+                console.log('load more',this.currentNotifyPage)
+                // 这里可以添加一些逻辑来防止在快速滚动时多次触发
+                if (this.currentNotifyPage <= this.totalNotifyPages) {
+                    this.getNotifyMessage(this.currentNotifyPage);
+                    this.currentNotifyPage += 1;
+                    this.isLoadingMore = false;
+                }
+                else {
+                    Toast.fail('没有更多了');
+                }
+            }
         },
 
     },
