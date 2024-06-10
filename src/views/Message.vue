@@ -161,7 +161,7 @@ export default {
 
 
             // 未读聊天数量
-            axios.post('/api/messagechat/chat/getUnreadNum', { otherSideId: this.doctorId })
+            axios.get(`/api/messagechat/chat/getUnreadNum/${this.doctorId}`)
                 .then(res => {
                     console.log(res)
                     this.chatUnread = res.data.data;
@@ -182,10 +182,7 @@ export default {
 
             this.getNotifyMessage(1);
             
-            
-
             // this.simulateNotifyData();
-
 
         },
 
@@ -386,7 +383,7 @@ export default {
         },
 
         showChatDetails(chat) {
-            console.log("chat detail", chat)
+            // console.log("chat detail", chat)
             this.$router.push({ 
                 name: 'ChatDetail', 
                 params: { otherSideId: 1 } 

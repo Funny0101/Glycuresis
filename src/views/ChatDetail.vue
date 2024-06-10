@@ -10,6 +10,12 @@
         <div class="chat-content" ref="messageList">
             <!-- 消息列表 -->
             <div v-for="(msg, index) in messages" :key="index" class="message-item" :class="{ 'my-message': msg.isMine }">
+                <!-- 只有当是第一条消息 或当前消息的日期与上一条消息不同的时候才显示时间 -->
+                <div v-if="index === 0 || (index > 0 && !isSameDay(msg.time, messages[index-1].time))" class="chat-date">
+                    {{ formatDate(msg.time) }}
+                </div>
+
+                
                 <div class="avatar-wrapper" :class="{ 'my-avatar': msg.isMine }">
                     <img class="avatar" :src="msg.isMine ? myAvatar : docAvatar" alt="Avatar" />
                 </div>
@@ -17,6 +23,8 @@
                     <div class="message-content">{{ msg.text }}</div>
                     <span class="message-time">{{ formatTime(msg.time) }}</span>
                 </div>
+                
+
             </div>
         </div>
         <!-- 输入框和发送按钮 -->
@@ -29,6 +37,7 @@
     
 <script>
     import axios from 'axios';
+import { format } from 'echarts';
 
     export default {
         data() {
@@ -37,13 +46,13 @@
                 otherSideId: this.$route.params.otherSideId,
                 messages: [
                     // 模拟数据，包含时间戳
-                    { text: '你好，最近怎么样？zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: false, time: new Date() },
-                    { text: '我很好，谢谢你。zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: true, time: new Date() },
-                    { text: '。。', isMine: false, time: new Date() },
-                    { text: '？', isMine: false, time: new Date() },
-                    { text: '。。', isMine: false, time: new Date() },
-                    { text: '？', isMine: true, time: new Date() },
-                    { text: '。。', isMine: false, time: new Date() },
+                    { text: '你好，最近怎么样？zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: false, time: new Date(2024,0,1) },
+                    { text: '我很好，谢谢你。zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: true, time: new Date(2024,0,1) },
+                    { text: '。。', isMine: false, time: new Date(2024,0,1) },
+                    { text: '？', isMine: false, time: new Date(2024,0,2) },
+                    { text: '。。', isMine: false, time: new Date(2024,0,3) },
+                    { text: '？', isMine: true, time: new Date(2024,0,3) },
+                    { text: '。。', isMine: false, time: new Date(2024,4,2) },
                     { text: '？', isMine: true, time: new Date() },
                     { text: '。。', isMine: false, time: new Date() },
                     { text: '？', isMine: true, time: new Date() },
@@ -96,13 +105,25 @@
                     });
                 }
             },
+
             formatTime(time) {
                 return new Date(time).toLocaleTimeString().slice(0, -3); 
             },
+            formatDate(time) {
+                return new Date(time).toLocaleDateString();
+            },
+
             scrollToBottom() {
                 const messageList = this.$refs.messageList;
                 messageList.scrollTop = messageList.scrollHeight;; 
-            }
+            },
+
+            // 检查两个日期是否在同一天
+            isSameDay(date1, date2) {
+                const d1 = new Date(date1);
+                const d2 = new Date(date2);
+                return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+            },
         }
     };
 </script>
@@ -137,6 +158,7 @@
         margin-bottom: 10px;
         display: flex;
         align-items: flex-start;
+        flex-wrap: wrap;
     }
     
     .avatar-wrapper {
@@ -226,4 +248,16 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .chat-date {
+        font-size: small;
+        color: #999;
+        padding-bottom: 15px;
+        text-align: center;
+        display: block;
+        margin: 0 auto; /* 居中对齐 */
+        width: 100%;
+    }
+
+
 </style>
