@@ -15,7 +15,6 @@
                     {{ formatDate(msg.time) }}
                 </div>
 
-                
                 <div class="avatar-wrapper" :class="{ 'my-avatar': msg.isMine }">
                     <img class="avatar" :src="msg.isMine ? myAvatar : docAvatar" alt="Avatar" />
                 </div>
@@ -24,7 +23,6 @@
                     <span class="message-time">{{ formatTime(msg.time) }}</span>
                 </div>
                 
-
             </div>
         </div>
         <!-- 输入框和发送按钮 -->
@@ -37,29 +35,14 @@
     
 <script>
     import axios from 'axios';
-import { format } from 'echarts';
+    import { format } from 'echarts';
 
     export default {
         data() {
             return {
                 // 假设从路由参数中获取
                 otherSideId: this.$route.params.otherSideId,
-                messages: [
-                    // 模拟数据，包含时间戳
-                    { text: '你好，最近怎么样？zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: false, time: new Date(2024,0,1) },
-                    { text: '我很好，谢谢你。zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: true, time: new Date(2024,0,1) },
-                    { text: '。。', isMine: false, time: new Date(2024,0,1) },
-                    { text: '？', isMine: false, time: new Date(2024,0,2) },
-                    { text: '。。', isMine: false, time: new Date(2024,0,3) },
-                    { text: '？', isMine: true, time: new Date(2024,0,3) },
-                    { text: '。。', isMine: false, time: new Date(2024,4,2) },
-                    { text: '？', isMine: true, time: new Date() },
-                    { text: '。。', isMine: false, time: new Date() },
-                    { text: '？', isMine: true, time: new Date() },
-                    { text: '。。', isMine: false, time: new Date() },
-                    { text: '？', isMine: true, time: new Date() },
-                    // ...其他消息
-                ],
+                messages: [],
                 inputMessage: '', // 用户输入的消息
 
                 docAvatar: require('@/assets/setting/doctor.png'),
@@ -67,8 +50,10 @@ import { format } from 'echarts';
 
             };
         },
+
         mounted() {
             this.getAvatar();
+            this.getMessages();
         },
 
         methods: {
@@ -87,6 +72,31 @@ import { format } from 'echarts';
                         console.log(err);
                     })
             },
+
+            getMessages() {
+
+                axios.get(`/api/messagechat/chat/getLatest/${this.otherSideId}`)
+                    .then(res => {
+                        console.log(res);
+                        const list = res.data.data;
+                        list.forEach(ele => {
+                            let item = {
+                                text: ele.message,
+                                isMine: ele.fromUserRole == 'PATIENT',
+                                time: new Date(ele.time),
+                            };
+                            this.messages.push(item);
+                        });
+
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+
+                // this.simulateData();
+
+            },
+
             sendMessage() {
                 if (this.inputMessage.trim()) {
                     const newMessage = {
@@ -111,6 +121,26 @@ import { format } from 'echarts';
             },
             formatDate(time) {
                 return new Date(time).toLocaleDateString();
+            },
+
+
+            simulateData() {
+                this.messages = [
+                    // 模拟数据，包含时间戳
+                    { text: '你好，最近怎么样？zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: false, time: new Date(2024,0,1) },
+                    { text: '我很好，谢谢你。zsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbdzsbd', isMine: true, time: new Date(2024,0,1) },
+                    { text: '。。', isMine: false, time: new Date(2024,0,1) },
+                    { text: '？', isMine: false, time: new Date(2024,0,2) },
+                    { text: '。。', isMine: false, time: new Date(2024,0,3) },
+                    { text: '？', isMine: true, time: new Date(2024,0,3) },
+                    { text: '。。', isMine: false, time: new Date(2024,4,2) },
+                    { text: '？', isMine: true, time: new Date() },
+                    { text: '。。', isMine: false, time: new Date() },
+                    { text: '？', isMine: true, time: new Date() },
+                    { text: '。。', isMine: false, time: new Date() },
+                    { text: '？', isMine: true, time: new Date() },
+                    // ...其他消息
+                ];
             },
 
             scrollToBottom() {

@@ -384,10 +384,39 @@ export default {
 
         showChatDetails(chat) {
             // console.log("chat detail", chat)
+            let readTimeDTO = {
+                otherSideId: this.doctorId, 
+                readTime: this.formatDate1(new Date()),
+            };
+            axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
+                .then(res => {
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log('check chat error', err);
+                });
+
             this.$router.push({ 
                 name: 'ChatDetail', 
                 params: { otherSideId: 1 } 
             });
+        },
+
+        formatDate1(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        },
+
+        formatDateTimeInGMT8(date) {
+            const offsetHours = 8;
+            const utcDate = new Date(date.getTime() + offsetHours * 60 * 60 * 1000);
+            return this.formatDate1(utcDate);
         },
 
         // 检查两个日期是否在同一天
