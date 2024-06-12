@@ -11,14 +11,14 @@
                     <div class="time-label">开始时间</div>
                     <van-button type="primary" icon="clock-o" class="time-button"
                         @click="showStartDateTimePicker = true">
-                        {{ this.startDateTimeFormatted }}
+                        {{ this.startDateTimeFormatted.slice(0,-3) }}
                     </van-button>
                 </van-col>
                 <van-col :span="12" class="time-col">
                     <!-- 结束时间选择按钮 -->
                     <div class="time-label">结束时间</div>
                     <van-button type="primary" icon="clock-o" class="time-button" @click="showEndDateTimePicker = true">
-                        {{ endDateTimeFormatted }}
+                        {{ endDateTimeFormatted.slice(0,-3) }}
                     </van-button>
                 </van-col>
             </van-row>
@@ -374,7 +374,7 @@ export default {
 .time-selector {
     display: flex;
     width: 100%;
-    justify-content: space-between;
+    justify-content:space-around;
     padding: 0.3rem;
     /* 内部内容居中 */
     align-items: center;

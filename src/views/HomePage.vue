@@ -484,8 +484,8 @@ export default {
     // 查询2小时内的血糖数据
     queryBloodSugarData() {
       // 获取当前时间
-      // const currentTime = new Date();
-      const currentTime = new Date(2024, 3, 11, 11, 44, 0);
+      const currentTime = new Date();
+      // const currentTime = new Date(2024, 3, 11, 11, 44, 0);
       // 查询2小时内的血糖记录
       const timeRange = {
         startTime: dealTime(new Date(currentTime.getTime() - 2 * 60 * 60 * 1000)), // 当前时间减去两小时
