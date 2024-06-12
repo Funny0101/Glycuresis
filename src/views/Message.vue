@@ -17,7 +17,8 @@
         >
         <van-tab :title="notifyTitltText" name="notify">
             <div class="notify-container">
-                <div v-if="notifyMessages.length === 0" class="empty-tip">没有通知消息</div>
+                <!-- <div v-if="notifyMessages.length === 0" class="empty-tip">没有通知消息</div> -->
+                <div v-if="notifyMessages.length === 0" class="empty-tip">加载中...</div>
                 <div v-else 
                     v-for="(notify, index) in notifyMessages" 
                     :key="notify.title" 
@@ -43,7 +44,7 @@
         <van-tab :title="chatTitleText" name="chat">
             <div class="chat-container">
                 <!-- 消息列表 -->
-                <div v-if="chatMessages.length === 0" class="empty-tip">没有通知消息</div>
+                <div v-if="chatMessages.length === 0" class="empty-tip">没有聊天消息</div>
                 <div v-else 
                     v-for="message in chatMessages" 
                     :key="message.from" 
@@ -129,46 +130,6 @@ export default {
     methods: {
 
         async getMessage() {
-            
-            // 获取医生ID
-            try{
-                const res = await get('/user/user/get');
-                if (res.code == 200) {
-                    this.doctorId = res.data.doctor;
-                }
-            } 
-            catch(err) {
-                console.log('获取医生信息失败', err)
-            }
-
-            // 获取与医生的最新聊天
-            axios.get(`/api/messagechat/chat/getLatest/${this.doctorId}`)
-                .then(res => {
-                    // 最新的一条
-                    let last = res.data.data[res.data.data.length - 1];
-                    console.log('latest chat', last);
-                    this.chatMessages = [{
-                        from: '医生',
-                        text: last.message,
-                        time: new Date(last.time),
-                        unread: 0, 
-                    }]
-
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-
-
-            // 未读聊天数量
-            axios.get(`/api/messagechat/chat/getUnreadNum/${this.doctorId}`)
-                .then(res => {
-                    console.log(res)
-                    this.chatUnread = res.data.data;
-                })
-                .catch(err => {
-                    console.log(err);
-                });
 
             // 未读通知数量
             axios.get('/api/messagechat/message/getUnreadNum')
@@ -182,8 +143,52 @@ export default {
 
             this.getNotifyMessage(1);
             
-            // this.simulateNotifyData();
+            // 获取医生ID
+            try{
+                const res = await get('/user/user/get');
+                if (res.code == 200) {
+                    this.doctorId = res.data.doctor;
+                }
+            } 
+            catch(err) {
+                console.log('获取医生信息失败', err)
+            }
 
+            // 获取私聊信息
+            try {
+                // 未读聊天数量
+                await axios.get(`/api/messagechat/chat/getUnreadNum/${this.doctorId}`)
+                    .then(res => {
+                        console.log('unread chat:',res)
+                        this.chatUnread = res.data.data;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+
+                // 获取与医生的最新聊天
+                axios.get(`/api/messagechat/chat/getLatest/${this.doctorId}`)
+                    .then(res => {
+                        // 最新的一条
+                        let last = res.data.data[res.data.data.length - 1];
+                        console.log('latest chat', last);
+                        this.chatMessages = [{
+                            from: '医生',
+                            text: this.getChatPreview(last.message),
+                            time: new Date(last.time),
+                            unread: this.chatUnread, 
+                        }];
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            }
+            catch(err) {
+                console.log('获取私聊失败', err)
+            }
+
+            // this.simulateNotifyData();
+            // this.simulateChatData();
         },
 
         getNotifyMessage(pageNo, pageSize=this.pageSize) {
@@ -400,6 +405,15 @@ export default {
                 name: 'ChatDetail', 
                 params: { otherSideId: 1 } 
             });
+        },
+
+        getChatPreview(chat) {
+            if (chat.length > 12) {
+                return chat.slice(0, 12) + '...';
+            }
+            else {
+                return chat;
+            }
         },
 
         formatDate1(date) {
