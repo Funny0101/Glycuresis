@@ -251,7 +251,17 @@ export default {
 
             // 已添加食物
             whetherShowFoodDetails: false, // 控制食物详情弹窗显示
-            selectedFood: null, // 选中的食物
+            selectedFood: {
+                foodMass: 0, // 食物的重量
+                calorieMassDensity: 0, // 食物的能量密度
+                calorieMass: 0, // 食物的能量
+                carbohydrateMassDensity: 0, // 食物的碳水化合物密度
+                carbohydrateMass: 0, // 食物的碳水化合物
+                fatMassDensity: 0, // 食物的脂肪密度
+                fatMass: 0, // 食物的脂肪
+                proteinMassDensity: 0, // 食物的蛋白质密度
+                proteinMass: 0, // 食物的蛋白质
+            }, // 选中的食物
             check_save: false,
             currentWeight: 100,
             addedFoodList: [], // 已添加食物列表
@@ -353,7 +363,7 @@ export default {
     },
 
     // 监听
-    watch:{
+    watch: {
 
     },
 

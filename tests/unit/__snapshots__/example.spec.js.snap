@@ -1,0 +1,445 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DietRecord.vue renders correctly 1`] = `
+<div
+  class="dietRecord"
+>
+  <!-- 导航栏 -->
+  <van-nav-bar
+    left-arrow=""
+    title="记饮食"
+  />
+  <!-- 时间选择 -->
+  <div
+    class="timeSelect"
+  >
+    <div
+      class="time"
+    >
+      6.9 星期日 
+      <van-icon
+        name="arrow-down"
+        style="color: aqua; font-size: 0.4rem;"
+      />
+    </div>
+    <van-calendar
+      min-date="Thu May 09 2024 00:00:00 GMT+0800 (中国标准时间)"
+      modelvalue="Sun Jun 09 2024 08:00:00 GMT+0800 (中国标准时间)"
+      show="false"
+      show-confirm="false"
+    />
+  </div>
+  <!-- 选择框 -->
+  <el-radio-group
+    border=""
+    class="horizontal-radio-group"
+    modelvalue="早餐"
+  >
+    <el-radio-button
+      label="早餐"
+    />
+    <el-radio-button
+      label="午餐"
+    />
+    <el-radio-button
+      label="晚餐"
+    />
+    <el-radio-button
+      label="加餐"
+    />
+  </el-radio-group>
+  <!-- 搜索框 -->
+  <van-search
+    modelvalue=""
+    placeholder="搜索你想要添加的食物"
+    shape="round"
+  />
+  <!-- 拍照上传弹窗 -->
+  <van-overlay
+    class="overlay"
+    show="false"
+  >
+    <div
+      class="wrapper"
+    >
+      <van-icon
+        class="closeIcon"
+        name="close"
+      />
+      <div
+        class="title"
+      >
+        <h3>
+          快捷记录图片
+        </h3>
+      </div>
+      <div
+        class="upload"
+      >
+        <h4>
+          上传图片
+        </h4>
+        <div
+          class="parent"
+        >
+          <div
+            class="child"
+          >
+            <van-uploader
+              max-count="1"
+              modelvalue=""
+              multiple=""
+            />
+            <van-stepper
+              button-size="20"
+              disable-input=""
+              modelvalue="1"
+            />
+            <van-button
+              hairline=""
+              plain=""
+              type="primary"
+            >
+              上传
+            </van-button>
+          </div>
+          <van-steps
+            active="-1"
+            active-color="#07c160"
+            active-icon="success"
+            direction="vertical"
+          >
+            <van-step>
+              图片上传
+            </van-step>
+            <van-step>
+              选择食物种类数量
+            </van-step>
+            <van-step>
+              确认上传
+            </van-step>
+            <van-step>
+              识别成功
+            </van-step>
+          </van-steps>
+        </div>
+      </div>
+      <div
+        class="select"
+        id="FoodTypeChoose"
+      >
+        <h4>
+          选择食物
+        </h4>
+        <div>
+          <van-sidebar
+            modelvalue="0"
+            van-sidebar-width="20px"
+          >
+            
+            <van-sidebar-item
+              class="custom-sidebar-item"
+              title="食物1"
+            />
+            
+          </van-sidebar>
+          <van-radio-group
+            modelvalue="0"
+          >
+            
+            <van-radio
+              name="0"
+            >
+              测试食物1
+            </van-radio>
+            <van-radio
+              name="1"
+            >
+              测试食物2
+            </van-radio>
+            
+          </van-radio-group>
+        </div>
+      </div>
+      <van-button
+        class="center-bottom"
+      >
+        确定
+      </van-button>
+    </div>
+  </van-overlay>
+  <!-- 页面内容 -->
+  <div
+    class="container"
+  >
+    <van-sidebar
+      class="sidebar"
+      modelvalue="0"
+    >
+      
+      
+    </van-sidebar>
+    <van-list
+      class="list-container"
+      finished="false"
+      finished-text="没有更多了"
+      loading="false"
+    >
+      
+      
+    </van-list>
+  </div>
+  <!-- 当前已添加 -->
+  <div
+    class="rooter"
+  >
+    <van-badge
+      color="#1989fa"
+    >
+      <van-icon
+        name="fire"
+        size="2em"
+      />
+    </van-badge>
+    <span
+      class="diet-items"
+    >
+      还没有添加任何食物哦
+    </span>
+    <van-button
+      class="savebutton"
+    >
+      保存
+    </van-button>
+  </div>
+  <!-- 已添加食物 -->
+  <van-overlay
+    class="overlay"
+    show="false"
+  >
+    <div
+      class="save-food"
+    >
+      <div
+        class="recordSummary"
+      >
+        <div
+          class="summary_row_1"
+        >
+          <span
+            class="vertical-line"
+          />
+          <span
+            class="number"
+          >
+            本次记录
+          </span>
+          <span>
+            <span
+              style="font-size: 1.5em;"
+            >
+              0.0
+            </span>
+            千卡
+          </span>
+        </div>
+        <div
+          class="summary_row_2"
+        >
+          <div>
+            <span
+              class="number"
+            >
+              脂肪
+            </span>
+            <span>
+              0.0克
+            </span>
+          </div>
+          <div>
+            |
+          </div>
+          <div>
+            <span
+              class="number"
+            >
+              蛋白质
+            </span>
+            <span>
+              0.0克
+            </span>
+          </div>
+          <div>
+            |
+          </div>
+          <div>
+            <span
+              class="number"
+            >
+              碳水
+            </span>
+            <span>
+              0.0克
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="recordDetail"
+      >
+        
+        
+      </div>
+      <div
+        class="recordButton"
+      >
+        <div>
+          <van-icon
+            name="delete"
+          />
+          <span
+            class="number"
+          >
+            清空列表
+          </span>
+        </div>
+        <van-button
+          class="savebutton"
+        >
+          保存
+        </van-button>
+      </div>
+    </div>
+  </van-overlay>
+  <!-- 食物详情弹窗 -->
+  <van-overlay
+    class="overlay"
+    show="false"
+  >
+    <div
+      class="food-details-popup"
+    >
+      <!-- 在这里放置食物的具体信息 -->
+      <van-icon
+        class="closeIcon"
+        name="close"
+      />
+      <!-- 以您需要的方式显示食物的具体信息 -->
+      <div
+        style="text-align: center;"
+      >
+        <h2>
+          添加食物
+        </h2>
+      </div>
+      <div>
+        <div
+          class="hengxiang"
+        >
+          <div
+            class="vertical-line"
+          />
+          <h2>
+            测试食物
+          </h2>
+          <!-- 食物名称 -->
+        </div>
+        <p
+          class="number"
+        >
+          150 千卡/100克
+        </p>
+        <!-- 能量信息 -->
+        <!-- 显示物质含量 -->
+        <div
+          class="energy"
+        >
+          <div
+            class="info-row"
+          >
+            <p
+              class="info-title carbs"
+            >
+              碳水化合物
+            </p>
+            <p
+              class="number"
+            >
+              200.0 克 
+            </p>
+          </div>
+          <div
+            class="info-row"
+          >
+            <p
+              class="info-title protein"
+            >
+              蛋白质
+            </p>
+            <p
+              class="number"
+            >
+              100.0 克
+            </p>
+          </div>
+          <div
+            class="info-row"
+          >
+            <p
+              class="info-title fat"
+            >
+              脂肪
+            </p>
+            <p
+              class="number"
+            >
+              50.0 克
+            </p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div
+          class="weightBar"
+        >
+          <div>
+            <span
+              style="font-size: 2em;"
+            >
+              150
+            </span>
+            <span
+              class="number"
+            >
+              千卡
+            </span>
+          </div>
+          <van-icon
+            id="diamondIcon"
+            name="diamond"
+          />
+          <div>
+            <span
+              style="font-size: 2em;"
+            >
+              100
+            </span>
+            <span
+              class="number"
+            >
+              克
+            </span>
+          </div>
+        </div>
+        <div />
+      </div>
+      <!-- 确定按钮 -->
+      <div
+        class="confirm-button"
+      >
+        确定
+      </div>
+    </div>
+  </van-overlay>
+</div>
+`;

@@ -86,6 +86,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import( /* webpackChunkName: 'ChatDetail' */ "../views/ChatDetail.vue"),
     meta: { requiresAuth: true }, // 这个路由需要登录权限
   },
+  {
+    path:'/doctorDetail',
+    name:'doctorDetail',
+    component: () => import( /* webpackChunkName: 'DoctorDetail' */ "../views/DoctorDetail.vue"),
+    meta: { requiresAuth: true }, // 这个路由需要登录权限
+  }
 ] 
 
 

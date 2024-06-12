@@ -494,7 +494,8 @@ export default {
       axios.get('/api/food/glucose/getGlucose', { params: timeRange })
         .then((res) => {
           this.glucoseValues = res.data.data;
-          // console.log("两小时内血糖数据", this.glucoseValues);
+          console.log("获取两小时血糖数据成功", res);
+          console.log("两小时内血糖数据", this.glucoseValues);
           // 初始化图表
           this.initEcharts();
         })
