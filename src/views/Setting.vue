@@ -166,7 +166,7 @@
         </van-dialog>
 
         <!-- 展示医生信息 -->
-        <van-cell is-link>
+        <van-cell is-link @click="this.$router.push('/doctorDetail');">
           <template #title>
             <div class="optionBar">
               <img src="@/assets/setting/doctor.png" alt="doctor">
