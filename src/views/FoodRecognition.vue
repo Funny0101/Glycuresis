@@ -67,7 +67,7 @@ export default {
 
             //1. 百度图像识别
             //百度图像识别的access_token和url
-            let picRecAccessToken = "24.0ac2f5a8d478236323e9dc9cba97cf79.2592000.1716884213.282335-58582664";
+            let picRecAccessToken = "24.3fa5f8ac107ad81c0f35363617f89c6f.2592000.1720657951.282335-58582664";
             let url = '/rest/2.0/image-classify/v2/advanced_general?access_token=' + picRecAccessToken;
 
             //调用百度图像识别接口
@@ -80,7 +80,7 @@ export default {
 
             //2. 调用百度大模型
             //百度大模型的access_token和url,模型的版本是ernie-3.5-8k-0205
-            let llmAccessToken = "24.e33d91404e6b8d4255421d6728c47eea.2592000.1716889157.282335-64727061"
+            let llmAccessToken = "24.5b028ac53be35e5f3f1f2aee4506e69d.2592000.1720657854.282335-64727061"
             let llmUrl = '/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie-3.5-8k-0205?access_token=' + llmAccessToken
             
             //调用百度千帆大模型接口
