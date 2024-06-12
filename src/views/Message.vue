@@ -384,7 +384,7 @@ export default {
 
         showChatDetails(chat) {
             // console.log("chat detail", chat)
-            let readTimeDTO = {
+            const readTimeDTO = {
                 otherSideId: this.doctorId, 
                 readTime: this.formatDate1(new Date()),
             };

@@ -106,7 +106,18 @@
 
                 //接收到消息的回调方法
                 this.ws.onmessage = function(event){
-                    console.log(event.data);//event.data中是另一端发送过来的内容
+                    const data = event.data; //event.data中是另一端发送过来的内容
+                    console.log(data)
+
+                    if (data.fromUserId == this.otherSideId) {
+                        let item = {
+                            text: data.message,
+                            isMine: data.fromUserRole == 'PATIENT',
+                            time: new Date(data.time)
+                        };
+                        this.messages.push(item);
+                        this.scrollToBottom();
+                    }
                 }
 
                 //连接发生错误的回调方法
