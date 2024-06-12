@@ -15,7 +15,7 @@
         </el-popconfirm>
       </van-col>
       <van-col span="2">
-        <van-badge :content="1" color="#1989fa">
+        <van-badge dot color="#1989fa">
           <van-icon name="envelop-o" size="30px" @click="()=>{this.$router.push('/message');}" />
         </van-badge>
       </van-col>
@@ -815,6 +815,11 @@ export default {
         console.log("WebSocket for message error");
       };
 
+      //连接关闭的回调方法
+      ws_msg.onclose = function(){
+        console.log("WebSocket for message close");
+      }
+
       //连接成功建立的回调方法
       ws_chat.onopen = function(){
         console.log("WebSocket for chat连接成功");
@@ -829,6 +834,11 @@ export default {
       ws_chat.onerror = function(){
         console.log("WebSocket for chat error");
       };
+
+      //连接关闭的回调方法
+      ws_chat.onclose = function(){
+        console.log("WebSocket for chat close");
+      }
 
     }
   },

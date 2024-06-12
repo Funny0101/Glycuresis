@@ -26,16 +26,33 @@
             </div>
         </div>
         <!-- 输入框和发送按钮 -->
-        <div class="chat-input" @click="adjustInputHeight" @keyup.enter="sendMessage">
+        <div class="chat-input">
+            <el-input 
+                type="textarea" 
+                v-model="inputMessage" 
+                :autosize="{ minRows: 1, maxRows: 2 }"
+                placeholder="输入消息内容" 
+                style="width: 78%; height:100%; margin-right:10px;"
+            />
+            <el-button 
+                @click="sendMessage" 
+                type="success" 
+                size="large"
+                style="width: 20%; height:100%; ;"
+            >发送</el-button>
+        </div>
+
+        <!-- <div class="chat-input" @click="adjustInputHeight" @keyup.enter="sendMessage">
             <input type="text" v-model="inputMessage" placeholder="输入消息内容" />
             <button @click="sendMessage">发送</button>
-        </div>
+        </div> -->
     </div>
 </template>
     
 <script>
     import axios from 'axios';
     import { format } from 'echarts';
+    import Cookies from 'js-cookie';
 
     export default {
         data() {
@@ -48,10 +65,16 @@
                 docAvatar: require('@/assets/setting/doctor.png'),
                 myAvatar: require('@/assets/blankuser.png'),
 
+                // satoken
+                satoken: Cookies.get('satoken'),
+                // websocket
+                wspath: 'ws://212.64.29.100:8023/websocket/ws/chat/',
+                ws: null,
             };
         },
 
         mounted() {
+            this.initWs();
             this.getAvatar();
             this.getMessages();
         },
@@ -71,6 +94,30 @@
                     .catch(err => {
                         console.log(err);
                     })
+            },
+
+            initWs() {
+                this.ws = new WebSocket(this.wspath + this.satoken);
+
+                //连接成功建立的回调方法
+                this.ws.onopen = function(){
+                    console.log("WebSocket for chat连接成功");
+                }
+
+                //接收到消息的回调方法
+                this.ws.onmessage = function(event){
+                    console.log(event.data);//event.data中是另一端发送过来的内容
+                }
+
+                //连接发生错误的回调方法
+                this.ws.onerror = function(){
+                    console.log("WebSocket for chat error");
+                };
+
+                //连接关闭的回调方法
+                this.ws.onclose = function(e){
+                    console.log("WebSocket for chat close", e.code, e.reason);
+                }
             },
 
             getMessages() {
@@ -94,25 +141,32 @@
                     });
 
                 // this.simulateData();
-
+                this.scrollToBottom();
             },
 
             sendMessage() {
                 if (this.inputMessage.trim()) {
+                    const stime = new Date();
                     const newMessage = {
                         text: this.inputMessage,
                         isMine: true,
-                        time: new Date()
+                        time: stime
                     };
                     this.messages.push(newMessage);
-                    this.inputMessage = '';
-                    // 这里可以添加发送消息的代码，例如调用API
 
-                    // 发送消息后，确保聊天内容区域滚动到底部，以便看到新消息
-                    // 确保使用Vue.nextTick等待DOM更新
-                    this.$nextTick(() => {
-                        this.scrollToBottom();
+                    // 这里添加发送消息的代码，例如调用API
+
+                    const sendMessage = JSON.stringify({
+                        toUserId: this.otherSideId,
+                        message: this.inputMessage,
+                        time: this.formatDateTime(stime),
                     });
+                    console.log("send:", sendMessage);
+                    this.ws.send(sendMessage);
+
+                    this.inputMessage = '';
+                    // 发送消息后，确保聊天内容区域滚动到底部，以便看到新消息
+                    this.scrollToBottom();
                 }
             },
 
@@ -121,6 +175,16 @@
             },
             formatDate(time) {
                 return new Date(time).toLocaleDateString();
+            },
+            formatDateTime(date) {
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 月份从0开始，所以需要+1
+                const day = date.getDate().toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                const seconds = date.getSeconds().toString().padStart(2, '0');
+
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
             },
 
 
@@ -144,8 +208,11 @@
             },
 
             scrollToBottom() {
-                const messageList = this.$refs.messageList;
-                messageList.scrollTop = messageList.scrollHeight;; 
+                // 使用Vue.nextTick等待DOM更新
+                this.$nextTick(() => {
+                    const messageList = this.$refs.messageList;
+                    messageList.scrollTop = messageList.scrollHeight;; 
+                });
             },
 
             // 检查两个日期是否在同一天
