@@ -15,7 +15,7 @@
         </el-popconfirm>
       </van-col>
       <van-col span="2">
-        <van-badge dot color="#1989fa">
+        <van-badge :dot="hasNewMessage" color="#1989fa">
           <van-icon name="envelop-o" size="30px" @click="()=>{this.$router.push('/message');}" />
         </van-badge>
       </van-col>
@@ -279,6 +279,7 @@ import * as echarts from "echarts";
 import axios from "axios";
 import { dealTime } from "../global";
 import Cookies from 'js-cookie';
+import { get, put, post, del } from "../axios/axiosConfig.js";
 
 export default {
   data() {
@@ -354,6 +355,9 @@ export default {
       // satoken
       satoken: Cookies.get('satoken'),
 
+      hasNewMessage: false,
+
+      doctorId: null,
     };
   },
   mounted() {
@@ -371,7 +375,9 @@ export default {
 
     // console.log('Version 1.0');
 
-    this.getWsMessage();
+    this.initWs();
+
+    this.getMessage();
   },
   // 计算属性
   computed: {
@@ -796,7 +802,7 @@ export default {
       // });
     },
 
-    getWsMessage() {
+    initWs() {
       const ws_msg = new WebSocket(this.wspath + 'message/' + this.satoken);
       const ws_chat = new WebSocket(this.wspath + 'chat/' + this.satoken);
 
@@ -804,11 +810,11 @@ export default {
       ws_msg.onopen = function(){
         console.log("WebSocket for message连接成功");
       }
-      
 
       //接收到消息的回调方法
       ws_msg.onmessage = function(event){
         console.log(event.data);//event.data中是另一端发送过来的内容
+        this.hasNewMessage = true;
       }
 
       //连接发生错误的回调方法
@@ -829,6 +835,7 @@ export default {
       //接收到消息的回调方法
       ws_chat.onmessage = function(event){
         console.log(event.data);//event.data中是另一端发送过来的内容
+        this.hasNewMessage = true;
       }
 
       //连接发生错误的回调方法
@@ -841,7 +848,53 @@ export default {
         console.log("WebSocket for chat close");
       }
 
+    },
+
+    async getMessage() {
+      // 未读通知数量
+      await axios.get('/api/messagechat/message/getUnreadNum')
+        .then(res => {
+          this.hasNewMessage = (res.data.data > 0);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+      if (this.hasNewMessage === false) {
+        // 获取医生ID
+        try{
+          const res = await get('/user/user/get');
+          if (res.code == 200) {
+              this.doctorId = res.data.doctor;
+          }
+        } 
+        catch(err) {
+            console.log('获取医生信息失败', err)
+        }
+
+        // 获取未读聊天数量
+        if (this.doctorId === '' || this.doctorId === null) {
+          this.hasNewMessage = false;
+        }
+        else {
+          try {
+            // 未读聊天数量
+            await axios.get(`/api/messagechat/chat/getUnreadNum/${this.doctorId}`)
+              .then(res => {
+                this.hasNewMessage = (res.data.data > 0);
+              })
+              .catch(err => {
+                  console.log(err);
+              });
+          }
+          catch(err) {
+              console.log('获取未读聊天信息失败', err)
+          }       
+        }
+      }
+      
     }
+
   },
 };
 </script>
