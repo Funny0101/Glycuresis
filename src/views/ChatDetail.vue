@@ -36,6 +36,7 @@
             />
             <el-button 
                 @click="sendMessage" 
+                @keyup.enter="sendMessage"
                 type="success" 
                 size="large"
                 style="width: 20%; height:100%; ;"
@@ -118,6 +119,13 @@
                         this.messages.push(item);
                         this.scrollToBottom();
                     }
+                    axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
+                        .then(res => {
+                            console.log(res);
+                        })
+                        .catch(err => {
+                            console.log('check chat error', err);
+                        });
                 }
 
                 //连接发生错误的回调方法
@@ -176,6 +184,18 @@
                     this.ws.send(sendMessage);
 
                     this.inputMessage = '';
+                    const readTimeDTO = {
+                        otherSideId: this.otherSideId, 
+                        readTime: this.formatDateTime(new Date()),
+                    };
+                    axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
+                        .then(res => {
+                            console.log(res);
+                        })
+                        .catch(err => {
+                            console.log('check chat error', err);
+                        });
+
                     // 发送消息后，确保聊天内容区域滚动到底部，以便看到新消息
                     this.scrollToBottom();
                 }

@@ -155,36 +155,42 @@ export default {
             }
 
             // 获取私聊信息
-            try {
-                // 未读聊天数量
-                await axios.get(`/api/messagechat/chat/getUnreadNum/${this.doctorId}`)
-                    .then(res => {
-                        console.log('unread chat:',res)
-                        this.chatUnread = res.data.data;
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-
-                // 获取与医生的最新聊天
-                axios.get(`/api/messagechat/chat/getLatest/${this.doctorId}`)
-                    .then(res => {
-                        // 最新的一条
-                        let last = res.data.data[res.data.data.length - 1];
-                        console.log('latest chat', last);
-                        this.chatMessages = [{
-                            from: '医生',
-                            text: this.getChatPreview(last.message),
-                            time: new Date(last.time),
-                            unread: this.chatUnread, 
-                        }];
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
+            if (this.doctorId === '' || this.doctorId === null) {
+                this.chatUnread = 0;
+                this.chatMessages = []
             }
-            catch(err) {
-                console.log('获取私聊失败', err)
+            else {
+                try {
+                    // 未读聊天数量
+                    await axios.get(`/api/messagechat/chat/getUnreadNum/${this.doctorId}`)
+                        .then(res => {
+                            console.log('unread chat:',res)
+                            this.chatUnread = res.data.data;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+
+                    // 获取与医生的最新聊天
+                    axios.get(`/api/messagechat/chat/getLatest/${this.doctorId}`)
+                        .then(res => {
+                            // 最新的一条
+                            let last = res.data.data[res.data.data.length - 1];
+                            console.log('latest chat', last);
+                            this.chatMessages = [{
+                                from: '医生',
+                                text: this.getChatPreview(last.message),
+                                time: new Date(last.time),
+                                unread: this.chatUnread, 
+                            }];
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                }
+                catch(err) {
+                    console.log('获取私聊失败', err)
+                }
             }
 
             // this.simulateNotifyData();
@@ -376,9 +382,12 @@ export default {
                 axios.post('/api/messagechat/message/confirm', idList)
                     .then(res => {
                         console.log('confirm:', res.data);
-                        const msg = this.notifyMessages.find(item => item.id === notify.id);
-                        if (msg) {
-                            msg.unread = false;
+                        if (res.data.code == 200) {
+                            const msg = this.notifyMessages.find(item => item.id === notify.id);
+                            if (msg) {
+                                msg.unread = false;
+                                this.notifyUnread -= 1;
+                            }
                         }
                     })
                     .catch(error => {
@@ -461,6 +470,7 @@ export default {
                 }
                 else {
                     Toast.fail('没有更多了');
+                    this.isLoadingMore = false;
                 }
             }
         },
