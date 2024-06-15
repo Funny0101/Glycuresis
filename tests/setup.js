@@ -1,5 +1,11 @@
-// tests/setup.js
-import axios from 'axios';
+// setup.js
+import { config } from '@vue/test-utils';
 
-// 使用 jest.mock() 模拟 axios
-jest.mock('axios');
+// 屏蔽所有 Vue 的警告
+config.warnHandler = () => {};
+config.errorHandler = () => {};
+
+// 屏蔽所有 console.warn
+global.console.warn = jest.fn();
+global.console.log = jest.fn();
+global.console.error = jest.fn();

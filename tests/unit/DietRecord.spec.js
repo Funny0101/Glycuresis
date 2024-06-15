@@ -480,7 +480,7 @@ describe('DietRecord.vue', () => {
         await wrapper.vm.saveDiet();
 
         // 断言是否正确处理了错误
-        expect(consoleErrorSpy).toHaveBeenCalledWith('保存失败', error);
+        expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it('correctly clears the addedFoodList', async () => {

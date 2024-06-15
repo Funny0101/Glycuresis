@@ -204,7 +204,7 @@ import axios from 'axios';
 import Ruler from "./Ruler.vue";
 import { dealTime } from "../global"
 import { get } from "../axios/axiosConfig.js";
-import { ElLoading } from 'element-plus'
+import { ElLoading,ElMessage } from 'element-plus'
 export default {
     name: 'dietRecord',
     props: ['meal'],

@@ -138,8 +138,8 @@ export default {
         };
     },
     mounted() {
-        this.startDateTime = this.globalSDT;
-        this.endDateTime = this.globalEDT;
+        this.startDateTime = this.$store.state.globalSDT;
+        this.endDateTime = this.$store.state.globalEDT;
         this.currentRate = 0;
         // 获取图表初始数据
         this.getBloodSugarData(this.startDateTime, this.endDateTime);

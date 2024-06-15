@@ -208,7 +208,7 @@
 <script>
 import { get, put, post, del } from "../axios/axiosConfig.js";
 import axios from "axios";
-import { showConfirmDialog } from 'vant';
+import { showConfirmDialog, showToast } from 'vant';
 export default {
   data() {
     return {
@@ -394,7 +394,7 @@ export default {
       }
     },
     // 超出文件大小的回调
-    onOversize() {
+    onOversize(file) {
       console.log(file);
       showToast('文件大小不能超过 500kb');
     },

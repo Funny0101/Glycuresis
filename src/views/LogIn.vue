@@ -128,6 +128,7 @@
 
 <script>
 import { get, put, post, del } from "../axios/axiosConfig.js";
+import {ElMessage} from 'element-plus';
 import store from "../store/index";
 import { ref } from 'vue';
 export default {
@@ -358,7 +359,7 @@ export default {
         const response = await get(`/user/user/sendCode/${this.registerData.account}`);
         // 处理获取验证码成功的逻辑
         console.log('获取验证码成功', response.data);
-        ElMessage('已发送验证码');
+        ElMessage.success('已发送验证码');
         const { code, message, data } = response;
         console.log('Code:', code);
         console.log('Message:', message);
