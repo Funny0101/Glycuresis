@@ -219,7 +219,7 @@ export default {
                 let item = {
                     id: ele.id,
                     fromId: ele.fromUserId,
-                    fromName: ele.fronUserName,
+                    fromName: ele.fromUserName,
                     time: new Date(ele.time),
                     title: this.getNotifyTitle(ele.message),
                     preview: this.getNotifyPreview(ele.message),
@@ -384,7 +384,7 @@ export default {
                         console.log('confirm:', res.data);
                         if (res.data.code == 200) {
                             const msg = this.notifyMessages.find(item => item.id === notify.id);
-                            if (msg) {
+                            if (msg && msg.unread == true) {
                                 msg.unread = false;
                                 this.notifyUnread -= 1;
                             }
