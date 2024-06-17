@@ -77,6 +77,7 @@
 import { Dialog, Toast } from 'vant';
 import axios from "axios";
 import { get, put, post, del } from "../axios/axiosConfig.js";
+import Cookies from 'js-cookie';
 
 export default {
     components: {
@@ -97,16 +98,27 @@ export default {
             pageSize: 5,
             totalNotifyPages: 5,
             isLoadingMore: false, // 控制是否正在加载更多数据
+
+            // websocket
+            wspath: 'ws://212.64.29.100:8023/websocket/ws/',
+            ws: null,
+            // satoken
+            satoken: Cookies.get('satoken'),
         }
     },
 
     mounted() {
+        this.initWs();
         // this.getDoctor();
         this.getMessage();
 
         // 添加滚动事件监听器
         window.addEventListener('scroll', this.handleNotifyScroll);
 
+    },
+
+    unmounted() {
+        this.ws.close();
     },
 
     beforeDestroy() {
@@ -128,6 +140,31 @@ export default {
     },
 
     methods: {
+
+        initWs() {
+            this.ws = new WebSocket(this.wspath + 'chat/' + this.satoken);
+
+            //连接成功建立的回调方法
+            this.ws.onopen = () => {
+                console.log("WebSocket for chat连接成功");
+            }
+
+            //接收到消息的回调方法
+            this.ws.onmessage = (event) => {
+                const data = event.data; //event.data中是另一端发送过来的内容
+                this.getMessage()
+            }
+
+            //连接发生错误的回调方法
+            this.ws.onerror = () => {
+                console.log("WebSocket for chat error");
+            };
+
+            //连接关闭的回调方法
+            this.ws.onclose = (e) => {
+                console.log("WebSocket for chat close", e.code, e.reason);
+            }
+        },
 
         async getMessage() {
 

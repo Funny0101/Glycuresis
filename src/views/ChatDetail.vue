@@ -83,6 +83,11 @@
             this.scrollToBottom();
         },
 
+        unmounted() {
+            // 移除websocket
+            this.ws.close()
+        },
+
         methods: {
             goBack() {
                 this.$router.go(-1);
@@ -104,48 +109,57 @@
                 this.ws = new WebSocket(this.wspath + this.satoken);
 
                 //连接成功建立的回调方法
-                this.ws.onopen = function(){
+                this.ws.onopen = () => {
                     console.log("WebSocket for chat连接成功");
                 }
 
                 //接收到消息的回调方法
-                this.ws.onmessage = function(event){
+                this.ws.onmessage = (event) => {
                     const data = event.data; //event.data中是另一端发送过来的内容
-                    console.log(data)
-                    //将data转换为json对象
-                    const jsonData = JSON.parse(data);
-                    console.log(jsonData);
-
-                    console.log(jsonData.fromUserId, this.otherSideId)
-                    if (jsonData.fromUserId == this.otherSideId) {
-                        let item = {
-                            text: jsonData.message,
-                            isMine: jsonData.fromUserRole == 'PATIENT',
-                            time: new Date(jsonData.time.replace('T', ' '))
-                        };
-                        console.log(item);
-                        console.log(this.messages);
-                        this.messages.push(item);
-                        this.scrollToBottom();
-                    }
-                    // axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
-                    //     .then(res => {
-                    //         console.log(res);
-                    //     })
-                    //     .catch(err => {
-                    //         console.log('check chat error', err);
-                    //     });
+                    this.receiveMessages(data)
                 }
 
                 //连接发生错误的回调方法
-                this.ws.onerror = function(){
+                this.ws.onerror = () => {
                     console.log("WebSocket for chat error");
                 };
 
                 //连接关闭的回调方法
-                this.ws.onclose = function(e){
+                this.ws.onclose = (e) => {
                     console.log("WebSocket for chat close", e.code, e.reason);
                 }
+            },
+
+            receiveMessages(data) {
+                console.log(data)
+                //将data转换为json对象
+                const jsonData = JSON.parse(data);
+                console.log(jsonData);
+
+                // console.log(jsonData.fromUserId, this.otherSideId)
+                // if (jsonData.fromUserId == this.otherSideId) {
+                    let item = {
+                        text: jsonData.message,
+                        isMine: jsonData.fromUserRole == 'PATIENT',
+                        time: new Date(jsonData.time.replace('T', ' '))
+                    };
+                    console.log(item);
+                    console.log(this.messages);
+                    this.messages.push(item);
+                    this.scrollToBottom();
+                // }
+
+                const readTimeDTO = {
+                    otherSideId: jsonData.fromUserId, 
+                    readTime: this.formatDateTime(new Date()),
+                };
+                axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
+                    .then(res => {
+                        console.log(res);
+                    })
+                    .catch(err => {
+                        console.log('check chat error', err);
+                    });
             },
 
             getMessages() {

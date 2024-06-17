@@ -807,44 +807,44 @@ export default {
       const ws_chat = new WebSocket(this.wspath + 'chat/' + this.satoken);
 
       //连接成功建立的回调方法
-      ws_msg.onopen = function(){
+      ws_msg.onopen = () => {
         console.log("WebSocket for message连接成功");
       }
 
       //接收到消息的回调方法
-      ws_msg.onmessage = function(event){
+      ws_msg.onmessage = (event) => {
         console.log(event.data);//event.data中是另一端发送过来的内容
         this.hasNewMessage = true;
       }
 
       //连接发生错误的回调方法
-      ws_msg.onerror = function(){
+      ws_msg.onerror = () => {
         console.log("WebSocket for message error");
       };
 
       //连接关闭的回调方法
-      ws_msg.onclose = function(){
+      ws_msg.onclose = () => {
         console.log("WebSocket for message close");
       }
 
       //连接成功建立的回调方法
-      ws_chat.onopen = function(){
+      ws_chat.onopen = () => {
         console.log("WebSocket for chat连接成功");
       }
 
       //接收到消息的回调方法
-      ws_chat.onmessage = function(event){
+      ws_chat.onmessage = (event) => {
         console.log(event.data);//event.data中是另一端发送过来的内容
         this.hasNewMessage = true;
       }
 
       //连接发生错误的回调方法
-      ws_chat.onerror = function(){
+      ws_chat.onerror = () => {
         console.log("WebSocket for chat error");
       };
 
       //连接关闭的回调方法
-      ws_chat.onclose = function(){
+      ws_chat.onclose = () => {
         console.log("WebSocket for chat close");
       }
 
