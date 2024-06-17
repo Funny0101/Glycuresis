@@ -79,6 +79,10 @@
             this.getMessages();
         },
 
+        beforeUpdate() {
+            this.scrollToBottom();
+        },
+
         methods: {
             goBack() {
                 this.$router.go(-1);
@@ -165,7 +169,7 @@
                     });
 
                 // this.simulateData();
-                this.scrollToBottom();
+                // this.scrollToBottom();
             },
 
             sendMessage() {
