@@ -22,7 +22,6 @@
                     <div class="message-content">{{ msg.text }}</div>
                     <span class="message-time">{{ formatTime(msg.time) }}</span>
                 </div>
-                
             </div>
         </div>
         <!-- 输入框和发送按钮 -->
@@ -109,23 +108,29 @@
                 this.ws.onmessage = function(event){
                     const data = event.data; //event.data中是另一端发送过来的内容
                     console.log(data)
+                    //将data转换为json对象
+                    const jsonData = JSON.parse(data);
+                    console.log(jsonData);
 
-                    if (data.fromUserId == this.otherSideId) {
+                    console.log(jsonData.fromUserId, this.otherSideId)
+                    if (jsonData.fromUserId == this.otherSideId) {
                         let item = {
-                            text: data.message,
-                            isMine: data.fromUserRole == 'PATIENT',
-                            time: new Date(data.time)
+                            text: jsonData.message,
+                            isMine: jsonData.fromUserRole == 'PATIENT',
+                            time: new Date(jsonData.time.replace('T', ' '))
                         };
+                        console.log(item);
+                        console.log(this.messages);
                         this.messages.push(item);
                         this.scrollToBottom();
                     }
-                    axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
-                        .then(res => {
-                            console.log(res);
-                        })
-                        .catch(err => {
-                            console.log('check chat error', err);
-                        });
+                    // axios.post('/api/messagechat/chat/updateReadTime', readTimeDTO)
+                    //     .then(res => {
+                    //         console.log(res);
+                    //     })
+                    //     .catch(err => {
+                    //         console.log('check chat error', err);
+                    //     });
                 }
 
                 //连接发生错误的回调方法
